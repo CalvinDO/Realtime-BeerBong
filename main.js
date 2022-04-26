@@ -15,10 +15,10 @@ var material = new THREE.ShaderMaterial({
             value: new THREE.Vector3(geometry.parameters.width, geometry.parameters.height, geometry.parameters.depth).multiplyScalar(0.5)
         },
         thickness: {
-            value: 0.01
+            value: 0.05
         },
         smoothness: {
-            value: 0.2
+            value: 0.05
         }
     },
     vertexShader: vertexShader,

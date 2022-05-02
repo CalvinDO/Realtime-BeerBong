@@ -1,60 +1,118 @@
-
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+window.addEventListener("mousedown", onMouseDown);
+window.addEventListener("mouseup", onMouseUp);
 
 
-const geometry = new THREE.BoxGeometry();
-//const material = new THREE.MeshPhongMaterial({ color: 0x90ff90 });
-var material = new THREE.ShaderMaterial({
-    uniforms: {
-        size: {
-            value: new THREE.Vector3(geometry.parameters.width, geometry.parameters.height, geometry.parameters.depth).multiplyScalar(0.5)
-        },
-        thickness: {
-            value: 0.05
-        },
-        smoothness: {
-            value: 0.05
-        }
-    },
-    vertexShader: vertexShader,
-    fragmentShader: fragmentShader
-});
+let scene;
+let ball;
+let materials = {};
+let shading = 'flat';
+let renderer;
+let gltf;
 
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
-
-camera.position.z = 5;
-
-// White directional light at half intensity shining from the top.
-const directionalLight = new THREE.DirectionalLight(0x00ffff, 25);
-scene.add(directionalLight);
-
-const ambientLight = new THREE.AmbientLight(0x00ff00, 25);
-scene.add(ambientLight);
+let gravity = new THREE.Vector3(0, -9.81, 0);
 
 
-console.log(directionalLight.position)
+
+let now = Date.now();
+let deltaTime = 0.018;
+
+
+let mouseDownPos = new THREE.Vector2();
+let mouseUpPos = new THREE.Vector2();
 
 init();
 
+
+
 function init() {
-    const planeGeometry = new THREE.PlaneGeometry( 1, 1 );
-    console.log(planeGeometry.parameters.width)
+
+    //setupGui();
+
+    setupSceneCamRenderer();
+
+    addLights();
+
+    instantiateMaterials();
+
+    addBall();
+
+
+    loadModels();
+
+    addDrunkEffect();
+
+
+    animate();
+}
+
+
+function loadModels() {
+    // loader = THREE.GLTFLoader(); 
+    //let loader = new THREE.GLTFLoader();
+}
+
+function setupSceneCamRenderer() {
+
+    scene = new THREE.Scene();
+
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.y = 2;
+    camera.position.z = 5;
+
+
+    renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+}
+
+function addLights() {
+
+    const directionalLight = new THREE.DirectionalLight(0x00ffff, 0.5);
+    scene.add(directionalLight);
+
+    const ambientLight = new THREE.AmbientLight(0x00ff00, 0.1);
+    scene.add(ambientLight);
+}
+
+
+function instantiateMaterials() {
+
+    materials['wireframe'] = new THREE.MeshBasicMaterial({ wireframe: true });
+    materials['flat'] = new THREE.MeshPhongMaterial({ specular: 0x000000, flatShading: true, side: THREE.DoubleSide });
+    materials['smooth'] = new THREE.MeshLambertMaterial({ side: THREE.DoubleSide });
+    materials['glossy'] = new THREE.MeshPhongMaterial({ side: THREE.DoubleSide });
+}
+
+function addBall() {
+
+    const geometry = new THREE.SphereGeometry(1, 32, 16);
+
+    ball = new Ball(geometry, materials[shading], gravity);
+
+    scene.add(ball);
+    //ball.position.copy(currentPosition)
+    ball.updatePosition();
+}
+
+
+
+function addDrunkEffect() {
+
+    const planeGeometry = new THREE.PlaneGeometry(1, 1);
+    console.log(planeGeometry.parameters.width);
     let drunkLevel = 1.0; //0.5 = drunk; 6 = good
     let drunk = true;
 
-    var planeMaterial= new THREE.ShaderMaterial({
+    var planeMaterial = new THREE.ShaderMaterial({
         uniforms: {
             size: {
                 value: new THREE.Vector3(planeGeometry.parameters.width, planeGeometry.parameters.height, planeGeometry.parameters.depth).multiplyScalar(0.5)
             },
             u_resolution: {
                 value: new THREE.Vector2(window.innerWidth, window.innerHeight)
+            },
+            length_center_to_corner: {
+                value: new THREE.Vector2(window.innerWidth, window.innerHeight).length()
             },
             drunkStage: {
                 value: drunkLevel
@@ -67,52 +125,79 @@ function init() {
         fragmentShader: [
             "uniform vec3 size;",
             "uniform vec2 u_resolution;",
+            "uniform float length_center_to_corner;",
             "uniform float drunkStage;",
             "uniform bool drunk;",
-
             "void main()",
             "{",
-                "if(drunk) {",
-                    "float rad = (size.x/0.9) * u_resolution.x;",
-                    "vec2 pos = vec2((u_resolution.x/2.0), (u_resolution.y/2.0));",
-                    "float relPosX = abs(gl_FragCoord.x - pos.x);",
-                    "float relPosY = abs(gl_FragCoord.y - pos.y);",
-                    "float fragDist = sqrt((relPosX * relPosX) + (relPosY * relPosY));",
-                    "float circleInfo = (rad - fragDist)/rad;",
-                    "float value = smoothstep(1.0, 0.0, sqrt(circleInfo * drunkStage));",
-                    "gl_FragColor = vec4(0.0,0.0,0.0,value);",
-                "} else {",
-                "gl_FragColor = vec4(0.0,0.0,0.0,0 );",
-                "}",
+            "if(drunk) {",
+            "float rad = (size.x/0.9) * length_center_to_corner;",
+            "vec2 pos = vec2((u_resolution.x/2.0), (u_resolution.y/2.0));",
+            "float relPosX = abs(gl_FragCoord.x - pos.x);",
+            "float relPosY = abs(gl_FragCoord.y - pos.y);",
+            "float fragDist = sqrt((relPosX * relPosX) + (relPosY * relPosY));",
+            "float circleInfo = (rad - fragDist)/rad;",
+            "float value = smoothstep(1.0, 0.0, sqrt(circleInfo * drunkStage));",
+            "gl_FragColor = vec4(1,1,1,value);",
+            "} else {",
+            "gl_FragColor = vec4(0.0,0.0,0.0,0 );",
+            "}",
             "}"
-    ].join("\n"),
-    transparent:true,
-    opacity:0.0
+        ].join("\n"),
+        transparent: true,
+        opacity: 0.0
     });
-    
-    const plane = new THREE.Mesh( planeGeometry, planeMaterial );
+
+    const plane = new THREE.Mesh(planeGeometry, planeMaterial);
     plane.name = "drunkFilter";
-    plane.position.set(0.0,0.0,4.9);
+    plane.position.set(0.0, 0.0, 4.9);
     scene.add(plane);
 }
 
-let now = 0
-let deltaTime = 0
+
 
 function calculateDeltaTime() {
-    deltaTime = (Date.now() - now) / 1000
-    now = Date.now()
+    deltaTime = (Date.now() - now) / 1000;
+    now = Date.now();
 }
 
 function animate() {
-    requestAnimationFrame(animate);
 
     calculateDeltaTime();
 
-    cube.rotateY(1 * deltaTime)
-    cube.rotateZ(1 * deltaTime)
+    ball.rotateY(1 * deltaTime)
+    ball.rotateZ(1 * deltaTime)
+
+    ball.updatePhysics(deltaTime);
+
+    //shading = effectController.newShading;
 
     renderer.render(scene, camera);
+
+    requestAnimationFrame(animate);
 }
 
-animate();
+function onMouseDown(_event) {
+    mouseDownPos = new THREE.Vector2(_event.clientX, _event.clientY);
+}
+
+function onMouseUp(_event) {
+    mouseUpPos = new THREE.Vector2(_event.clientX, _event.clientY);
+
+    let swipe = mouseUpPos.sub(mouseDownPos);
+    // console.log(swipe);
+    //console.log(ball.position);
+    ball.toss(swipe);
+}
+
+/*
+function setupGui() {
+
+    effectController = {
+        newShading: 'glossy'
+    };
+
+    const gui = new GUI();
+    gui.add(effectController, 'newShading', ['wireframe', 'flat', 'smooth', 'glossy']).name('Shading').onChange(render);
+}
+*/

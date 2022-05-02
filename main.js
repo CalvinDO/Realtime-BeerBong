@@ -1,57 +1,88 @@
+let scene;
+let ball;
+let materials = {};
+let shading = 'flat';
+let renderer;
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
-
-
-const geometry = new THREE.BoxGeometry();
-//const material = new THREE.MeshPhongMaterial({ color: 0x90ff90 });
-var material = new THREE.MeshPhongMaterial({
-    color: 0xffffff,
-    flatShading: true,
-    vertexColors: true,
-    shininess: 0
-});
-
-/*new THREE.ShaderMaterial({
-uniforms: {
-    size: {
-        value: new THREE.Vector3(geometry.parameters.width, geometry.parameters.height, geometry.parameters.depth).multiplyScalar(0.5)
-    },
-    thickness: {
-        value: 0.05
-    },
-    smoothness: {
-        value: 0.05
-    }
-},
-vertexShader: vertexShader,
-fragmentShader: fragmentShader
-});*/
-
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
-
-camera.position.z = 5;
-
-// White directional light at half intensity shining from the top.
-const directionalLight = new THREE.DirectionalLight(0x00ffff, 25);
-scene.add(directionalLight);
-
-const ambientLight = new THREE.AmbientLight(0x00ff00, 25);
-scene.add(ambientLight);
+let gravity = new THREE.Vector3(0, 0, -9.81);
+let currentSpeed = new THREE.Vector3(0, 0, 0);
+let currentPosition = new THREE.Vector3(0, 2, 0);
 
 
-console.log(directionalLight.position)
+let now = 0
+let deltaTime = 0
+
 
 init();
 
+
+
 function init() {
+
+    //setupGui();
+
+    setupSceneCamRenderer();
+
+    addLights();
+
+    instantiateMaterials();
+
+    addBall();
+
+
+    addDrunkEffect();
+}
+
+
+function setupSceneCamRenderer() {
+
+    scene = new THREE.Scene();
+
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.y = 2;
+    camera.position.z = 5;
+
+
+    renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+}
+
+function addLights() {
+
+    const directionalLight = new THREE.DirectionalLight(0x00ffff, 0.5);
+    scene.add(directionalLight);
+
+    const ambientLight = new THREE.AmbientLight(0x00ff00, 0.1);
+    scene.add(ambientLight);
+}
+
+
+function instantiateMaterials() {
+
+    materials['wireframe'] = new THREE.MeshBasicMaterial({ wireframe: true });
+    materials['flat'] = new THREE.MeshPhongMaterial({ specular: 0x000000, flatShading: true, side: THREE.DoubleSide });
+    materials['smooth'] = new THREE.MeshLambertMaterial({ side: THREE.DoubleSide });
+    materials['glossy'] = new THREE.MeshPhongMaterial({ side: THREE.DoubleSide });
+}
+
+function addBall() {
+
+    const geometry = new THREE.SphereGeometry(1, 32, 16);
+
+    ball = new Ball(geometry, materials[shading]);
+
+    scene.add(ball);
+    ball.position.copy(currentPosition)
+    console.log(ball.position);
+}
+
+
+
+function addDrunkEffect() {
+
     const planeGeometry = new THREE.PlaneGeometry(1, 1);
-    console.log(planeGeometry.parameters.width)
+    console.log(planeGeometry.parameters.width);
     let drunkLevel = 1.0; //0.5 = drunk; 6 = good
     let drunk = true;
 
@@ -64,7 +95,6 @@ function init() {
                 value: new THREE.Vector2(window.innerWidth, window.innerHeight)
             },
             length_center_to_corner: {
-
                 value: new THREE.Vector2(window.innerWidth, window.innerHeight).length()
             },
             drunkStage: {
@@ -107,8 +137,7 @@ function init() {
     scene.add(plane);
 }
 
-let now = 0
-let deltaTime = 0
+
 
 function calculateDeltaTime() {
     deltaTime = (Date.now() - now) / 1000
@@ -116,14 +145,29 @@ function calculateDeltaTime() {
 }
 
 function animate() {
+
     requestAnimationFrame(animate);
 
     calculateDeltaTime();
 
-    cube.rotateY(1 * deltaTime)
-    cube.rotateZ(1 * deltaTime)
+    ball.rotateY(1 * deltaTime)
+    ball.rotateZ(1 * deltaTime)
+
+    //shading = effectController.newShading;
 
     renderer.render(scene, camera);
 }
 
 animate();
+
+/*
+function setupGui() {
+
+    effectController = {
+        newShading: 'glossy'
+    };
+
+    const gui = new GUI();
+    gui.add(effectController, 'newShading', ['wireframe', 'flat', 'smooth', 'glossy']).name('Shading').onChange(render);
+}
+*/

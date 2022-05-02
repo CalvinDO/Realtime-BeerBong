@@ -4,6 +4,7 @@ let ball;
 let materials = {};
 let shading = 'flat';
 let renderer;
+let gltf
 
 
 

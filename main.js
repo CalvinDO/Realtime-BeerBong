@@ -30,12 +30,19 @@ function init() {
     addBall();
 
 
+    loadModels();
+
     addDrunkEffect();
 
 
     animate();
 }
 
+
+function loadModels() {
+    // loader = THREE.GLTFLoader(); 
+    //let loader = new THREE.GLTFLoader();
+}
 
 function setupSceneCamRenderer() {
 

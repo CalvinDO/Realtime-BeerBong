@@ -1,15 +1,14 @@
+
 let scene;
 let ball;
 let materials = {};
 let shading = 'flat';
 let renderer;
 
-let gravity = new THREE.Vector3(0, 0, -9.81);
-let currentSpeed = new THREE.Vector3(0, 0, 0);
-let currentPosition = new THREE.Vector3(0, 2, 0);
 
 
-let now = 0
+
+let now = Date.now();
 let deltaTime = 0
 
 
@@ -31,6 +30,9 @@ function init() {
 
 
     addDrunkEffect();
+
+
+    animate();
 }
 
 
@@ -39,7 +41,7 @@ function setupSceneCamRenderer() {
     scene = new THREE.Scene();
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.y = 2;
+    camera.position.y = 0;
     camera.position.z = 5;
 
 
@@ -73,7 +75,8 @@ function addBall() {
     ball = new Ball(geometry, materials[shading]);
 
     scene.add(ball);
-    ball.position.copy(currentPosition)
+    //ball.position.copy(currentPosition)
+    ball.updatePhysics();
     console.log(ball.position);
 }
 
@@ -140,6 +143,8 @@ function addDrunkEffect() {
 
 
 function calculateDeltaTime() {
+    ball.calculateDeltaTime();
+
     deltaTime = (Date.now() - now) / 1000
     now = Date.now()
 }
@@ -153,12 +158,14 @@ function animate() {
     ball.rotateY(1 * deltaTime)
     ball.rotateZ(1 * deltaTime)
 
+    ball.updatePhysics();
+
     //shading = effectController.newShading;
 
     renderer.render(scene, camera);
 }
 
-animate();
+
 
 /*
 function setupGui() {

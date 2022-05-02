@@ -1,17 +1,24 @@
+window.addEventListener("mousedown", onMouseDown);
+window.addEventListener("mouseup", onMouseUp);
+
 
 let scene;
 let ball;
 let materials = {};
 let shading = 'flat';
 let renderer;
-let gltf
+let gltf;
 
+let gravity = new THREE.Vector3(0, -9.81, 0);
 
 
 
 let now = Date.now();
-let deltaTime = 0
+let deltaTime = 0.018;
 
+
+let mouseDownPos = new THREE.Vector2();
+let mouseUpPos = new THREE.Vector2();
 
 init();
 
@@ -49,7 +56,7 @@ function setupSceneCamRenderer() {
     scene = new THREE.Scene();
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.y = 0;
+    camera.position.y = 2;
     camera.position.z = 5;
 
 
@@ -80,12 +87,11 @@ function addBall() {
 
     const geometry = new THREE.SphereGeometry(1, 32, 16);
 
-    ball = new Ball(geometry, materials[shading]);
+    ball = new Ball(geometry, materials[shading], gravity);
 
     scene.add(ball);
     //ball.position.copy(currentPosition)
-    ball.updatePhysics();
-    console.log(ball.position);
+    ball.updatePosition();
 }
 
 
@@ -151,29 +157,38 @@ function addDrunkEffect() {
 
 
 function calculateDeltaTime() {
-    ball.calculateDeltaTime();
-
-    deltaTime = (Date.now() - now) / 1000
-    now = Date.now()
+    deltaTime = (Date.now() - now) / 1000;
+    now = Date.now();
 }
 
 function animate() {
-
-    requestAnimationFrame(animate);
 
     calculateDeltaTime();
 
     ball.rotateY(1 * deltaTime)
     ball.rotateZ(1 * deltaTime)
 
-    ball.updatePhysics();
+    ball.updatePhysics(deltaTime);
 
     //shading = effectController.newShading;
 
     renderer.render(scene, camera);
+
+    requestAnimationFrame(animate);
 }
 
+function onMouseDown(_event) {
+    mouseDownPos = new THREE.Vector2(_event.clientX, _event.clientY);
+}
 
+function onMouseUp(_event) {
+    mouseUpPos = new THREE.Vector2(_event.clientX, _event.clientY);
+
+    let swipe = mouseUpPos.sub(mouseDownPos);
+    // console.log(swipe);
+    //console.log(ball.position);
+    ball.toss(swipe);
+}
 
 /*
 function setupGui() {

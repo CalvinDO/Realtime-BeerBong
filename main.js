@@ -20,6 +20,8 @@ let deltaTime = 0.018;
 let mouseDownPos = new THREE.Vector2();
 let mouseUpPos = new THREE.Vector2();
 
+loadModels();
+
 init();
 
 
@@ -34,10 +36,11 @@ function init() {
 
     instantiateMaterials();
 
+
     addBall();
 
 
-    loadModels();
+
 
     addDrunkEffect();
 
@@ -46,9 +49,15 @@ function init() {
 }
 
 
-function loadModels() {
-    // loader = THREE.GLTFLoader(); 
+async function loadModels() {
+
+    // loader = THREE.GLTFLoader();
     //let loader = new THREE.GLTFLoader();
+    let table = await Importer.import("Assets/Table.obj");
+    scene.add(table);
+
+    let cup = await Importer.import("Assets/Cup.obj");
+    scene.add(cup);
 }
 
 function setupSceneCamRenderer() {
@@ -56,8 +65,8 @@ function setupSceneCamRenderer() {
     scene = new THREE.Scene();
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.y = 2;
-    camera.position.z = 5;
+    camera.position.y = 1.5;
+    camera.position.z = 2.8;
 
 
     renderer = new THREE.WebGLRenderer();
@@ -85,7 +94,7 @@ function instantiateMaterials() {
 
 function addBall() {
 
-    const geometry = new THREE.SphereGeometry(1, 32, 16);
+    const geometry = new THREE.SphereGeometry(0.1, 32, 16);
 
     ball = new Ball(geometry, materials[shading], gravity);
 

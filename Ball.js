@@ -3,7 +3,7 @@ import * as THREE from './three.js-master/build/three.module.js'
 class Ball extends THREE.Mesh {
 
     currentSpeed = new THREE.Vector3(0, 0, 0);
-    currentPosition = new THREE.Vector3(0, 2, 0);
+    currentPosition = new THREE.Vector3(0, 1.2, 1.3);
     gravity;
     deltaTime = 0.02;
 
@@ -29,8 +29,15 @@ class Ball extends THREE.Mesh {
         this.position.copy(this.currentPosition);
     }
 
+    setBack() {
+        this.currentPosition.set(0, 1, 1.3)
+        this.currentSpeed.set(0, 1.2, 0);
+        this.gravity.set(0, -9.81, 0)
+        this.deltaTime = 0.02
+    }
+
     toss(_swipe) {
-        _swipe.multiplyScalar(0.01);
+        _swipe.multiplyScalar(0.005);
         let swipe3D = new THREE.Vector3(_swipe.x, -_swipe.y * 3, _swipe.y);
         this.currentSpeed = swipe3D;
     }
@@ -42,13 +49,13 @@ class Ball extends THREE.Mesh {
         //console.log(this.currentSpeed, this.deltaTime);
 
 
-        if (this.currentPosition.y <= 0) {
+        if (this.currentPosition.y <= 0.67) {
 
             this.currentSpeed.y *= -1;
 
             //this.currentSpeed.multiplyScalar(-1);
-            console.log(this.currentSpeed.length());
-            console.log("switchedDirection!");
+            // console.log(this.currentSpeed.length());
+            // console.log("switchedDirection!");
             return;
         }
 

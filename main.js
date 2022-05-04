@@ -3,9 +3,8 @@ import {Ball} from './Ball.js'
 import {GLTFLoader} from "./three.js-master/examples/jsm/loaders/GLTFLoader.js";
 import {OrbitControls} from "./three.js-master/examples/jsm/controls/OrbitControls.js";
 
-// window.addEventListener("mousedown", onMouseDown);
-// window.addEventListener("mouseup", onMouseUp);
 
+document.addEventListener("keydown", onKeyDown)
 
 let scene;
 let ball;
@@ -16,15 +15,26 @@ let camera;
 let controls;
 const loader = new GLTFLoader();
 
+let orbitControls = false;
+let ballThrow = true;
+
+if (ballThrow) {
+    window.addEventListener("mousedown", onMouseDown);
+    window.addEventListener("mouseup", onMouseUp);
+}
+
 
 let gravity = new THREE.Vector3(0, -9.81, 0);
 
 let pCups = [
+    // yours
+    // 1. row
     {
         x: 0,
         y: 0.67,
         z: 0.85
     },
+    // 2. row
     {
         x: 0.045,
         y: 0.67,
@@ -35,6 +45,111 @@ let pCups = [
         y: 0.67,
         z: 0.93
     },
+    // 3. row
+    {
+        x: -0.09,
+        y: 0.67,
+        z: 1.01
+    },
+    {
+        x: 0,
+        y: 0.67,
+        z: 1.01
+    },
+    {
+        x: 0.09,
+        y: 0.67,
+        z: 1.01
+    },
+    // 4. row
+    {
+        x: 0.135,
+        y: 0.67,
+        z: 1.09
+    },
+    {
+        x: 0.045,
+        y: 0.67,
+        z: 1.09
+    },
+    {
+        x: -0.135,
+        y: 0.67,
+        z: 1.09
+    },
+    {
+        x: -0.045,
+        y: 0.67,
+        z: 1.09
+    },
+    // water cup
+    {
+        x: 0.21,
+        y: 0.67,
+        z: 0.75
+    },
+
+    // enemies
+    //1. row
+    {
+        x: 0,
+        y: 0.67,
+        z: -0.85
+    },
+    // 2. row
+    {
+        x: 0.045,
+        y: 0.67,
+        z: -0.93
+    },
+    {
+        x: -0.045,
+        y: 0.67,
+        z: -0.93
+    },
+    // 3. row
+    {
+        x: -0.09,
+        y: 0.67,
+        z: -1.01
+    },
+    {
+        x: 0,
+        y: 0.67,
+        z: -1.01
+    },
+    {
+        x: 0.09,
+        y: 0.67,
+        z: -1.01
+    },
+    // 4. row
+    {
+        x: 0.135,
+        y: 0.67,
+        z: -1.09
+    },
+    {
+        x: 0.045,
+        y: 0.67,
+        z: -1.09
+    },
+    {
+        x: -0.135,
+        y: 0.67,
+        z: -1.09
+    },
+    {
+        x: -0.045,
+        y: 0.67,
+        z: -1.09
+    },
+    // water cup
+    {
+        x: -0.21,
+        y: 0.67,
+        z: -0.75
+    }
 ]
 
 let pTable = {
@@ -66,7 +181,7 @@ function init() {
 
     instantiateMaterials();
 
-    // addBall();
+    addBall();
 
     addCups();
 
@@ -74,8 +189,9 @@ function init() {
 
     addDrunkEffect();
 
-    installOrbitControls();
-
+    if (orbitControls) {
+        installOrbitControls();
+    }
 
     animate();
 }
@@ -86,6 +202,7 @@ function addCups() {
     for (let pCup of pCups) {
         loadModel('Cup.glb', pCup)
     }
+    // loadModel('Cup.glb', pCups[0])
 }
 
 function installOrbitControls() {
@@ -95,14 +212,15 @@ function installOrbitControls() {
 
 function loadModel(model, position) {
     loader.load('Assets/' + model, function (glb) {
-        console.log(glb)
+        // console.log(glb)
         const root = glb.scene
+        // root.scale.set(1.5, 1.5, 1.5)
         root.position.set(position.x, position.y, position.z)
         scene.add(root)
     }, function (xhr) {
-        console.log((xhr.loaded / xhr.total * 100) + '% loaded')
+        // console.log((xhr.loaded / xhr.total * 100) + '% loaded')
     }, function (error) {
-        console.log('ERROR: ', error)
+        // console.log('ERROR: ', error)
     })
 }
 
@@ -125,8 +243,9 @@ function setupSceneCamRenderer() {
     scene.background = new THREE.Color(0xdddddd)
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.y = 1.5;
-    camera.position.z = 2.8;
+    camera.position.y = 1.3;
+    camera.position.z = 2.3;
+    camera.rotation.x = -0.5
 
 
     renderer = new THREE.WebGLRenderer();
@@ -136,11 +255,29 @@ function setupSceneCamRenderer() {
 
 function addLights() {
 
-    const directionalLight = new THREE.DirectionalLight(0x00ffff, 0.5);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    directionalLight.position.set(0,1,0)
+    directionalLight.castShadow = true;
     scene.add(directionalLight);
 
-    const ambientLight = new THREE.AmbientLight(0x00ff00, 0.1);
+    const ambientLight = new THREE.AmbientLight(0x404040, 1);
     scene.add(ambientLight);
+
+    const spotLight1 = new THREE.PointLight(0xc4c4c4c4, 0.2)
+    spotLight1.position.set(0, 300, 500)
+    scene.add(spotLight1)
+
+    const spotLight2 = new THREE.PointLight(0xc4c4c4c4, 0.2)
+    spotLight2.position.set(500, 100, 0)
+    scene.add(spotLight2)
+
+    const spotLight3 = new THREE.PointLight(0xc4c4c4c4, 0.2)
+    spotLight3.position.set(0, 100, -500)
+    scene.add(spotLight3)
+
+    const spotLight4 = new THREE.PointLight(0xc4c4c4c4, 0.2)
+    spotLight4.position.set(-500, 300, 0)
+    scene.add(spotLight4)
 }
 
 
@@ -154,7 +291,7 @@ function instantiateMaterials() {
 
 function addBall() {
 
-    const geometry = new THREE.SphereGeometry(0.1, 32, 16);
+    const geometry = new THREE.SphereGeometry(0.02, 32, 16);
 
     ball = new Ball(geometry, materials[shading], gravity);
 
@@ -245,7 +382,9 @@ function animate() {
 
     //shading = effectController.newShading;
 
-    controls.update()
+    if (controls) {
+        controls.update()
+    }
 
     renderer.render(scene, camera);
 
@@ -263,6 +402,13 @@ function onMouseUp(_event) {
     // console.log(swipe);
     //console.log(ball.position);
     ball.toss(swipe);
+}
+
+function onKeyDown(_event) {
+    // console.log(_event)
+    if (_event.code === 'Space') {
+        ball.setBack()
+    }
 }
 
 /*

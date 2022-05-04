@@ -1,3 +1,5 @@
+import * as THREE from './three.js-master/build/three.module.js'
+
 class Ball extends THREE.Mesh {
 
     currentSpeed = new THREE.Vector3(0, 0, 0);
@@ -59,3 +61,5 @@ class Ball extends THREE.Mesh {
         //console.log("gravity: ", this.gravity);
     }
 }
+
+export {Ball}

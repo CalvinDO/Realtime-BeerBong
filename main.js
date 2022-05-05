@@ -199,8 +199,16 @@ function init() {
 
 
 function addCups() {
+    let i = 0
     for (let pCup of pCups) {
-        loadModel('Cup.glb', pCup)
+        let src = ''
+        if (i <= 10) {
+            src = 'RedCup.glb'
+        } else {
+            src = 'BlueCup.glb'
+        }
+        loadModel(src, pCup)
+        i++
     }
     // loadModel('Cup.glb', pCups[0])
 }

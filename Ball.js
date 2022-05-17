@@ -38,7 +38,7 @@ class Ball extends THREE.Mesh {
 
     toss(_swipe) {
         _swipe.multiplyScalar(0.005);
-        let swipe3D = new THREE.Vector3(_swipe.x, -_swipe.y * 3, _swipe.y);
+        let swipe3D = new THREE.Vector3(_swipe.x, -_swipe.y * 2, _swipe.y);
         this.currentSpeed = swipe3D;
     }
 

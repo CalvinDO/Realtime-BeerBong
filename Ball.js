@@ -1,4 +1,4 @@
-import * as THREE from './three.js-master/build/three.module.js'
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js'
 
 class Ball extends THREE.Mesh {
 
@@ -69,4 +69,4 @@ class Ball extends THREE.Mesh {
     }
 }
 
-export {Ball}
+export { Ball }

@@ -1,0 +1,9 @@
+{
+    "liveServer.settings.https": {
+    "enable": true, //set it true to enable the feature.
+    "cert": "E:\\Studium\\6_Semester\\Echtzeit-Computergrafik\\Praktikum\\Realtime-BeerBong\\snowpack.crt", //full path of the certificate
+    "key": "E:\\Studium\\6_Semester\\Echtzeit-Computergrafik\\Praktikum\\Realtime-BeerBong\\snowpack.key", //full path of the private key
+    "passphrase": "123456"
+    },
+    "liveServer.settings.port": 5502
+    }

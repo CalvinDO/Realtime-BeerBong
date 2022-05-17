@@ -2,7 +2,7 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.mod
 import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 import { Ball } from './Ball.js'
-
+import {ARButton} from './ARButton.js'
 
 document.addEventListener("keydown", onKeyDown)
 
@@ -170,7 +170,6 @@ let mouseUpPos = new THREE.Vector2();
 init();
 
 
-
 function init() {
 
     //setupGui();
@@ -192,6 +191,8 @@ function init() {
     if (orbitControls) {
         installOrbitControls();
     }
+
+
 
     animate();
 }
@@ -259,6 +260,8 @@ function setupSceneCamRenderer() {
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
+    document.body.appendChild(ARButton.createButton(renderer));
+    renderer.xr.enabled = true;
 }
 
 function addLights() {

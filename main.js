@@ -1,6 +1,12 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
 import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
+import { EffectComposer } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/ShaderPass.js';
+import { GlitchPass } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/GlitchPass.js';
+import { CustomShader } from './customShader.js';
+
 import { Ball } from './Ball.js'
 import {ARButton} from './ARButton.js'
 
@@ -11,6 +17,7 @@ let ball;
 let materials = {};
 let shading = 'flat';
 let renderer;
+let composer;
 let camera;
 let controls;
 const loader = new GLTFLoader();
@@ -246,10 +253,15 @@ function loadModel(model, position) {
 // }
 
 function setupSceneCamRenderer() {
+    renderer = new THREE.WebGLRenderer({ antialias: true});
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.xr.enabled = true;
+
+    
 
     scene = new THREE.Scene();
 
-    scene.background = new THREE.Color(0xdddddd)
+    //scene.background = new THREE.Color(0xdddddd)
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.y = 1.3;
@@ -257,11 +269,20 @@ function setupSceneCamRenderer() {
     camera.rotation.x = -0.5
 
 
-    renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
     document.body.appendChild(ARButton.createButton(renderer));
-    renderer.xr.enabled = true;
+
+    composer = new EffectComposer( renderer );
+
+    const renderPass = new RenderPass( scene, camera );
+    composer.addPass( renderPass ); 
+
+    const customShader = new ShaderPass( CustomShader ); // in customshader.js kann man einen shader entwickeln der dann angewendet wird
+    composer.addPass( customShader );
+
+    const glitchPass = new GlitchPass(); // Nur zum beispiel das postprocessing funktioniert
+    composer.addPass( glitchPass );
+    
 }
 
 function addLights() {
@@ -379,7 +400,7 @@ function calculateDeltaTime() {
 }
 
 function animate() {
-
+    requestAnimationFrame(animate);
     calculateDeltaTime();
 
     if (ball) {
@@ -397,9 +418,10 @@ function animate() {
         controls.update()
     }
 
-    renderer.render(scene, camera);
+   
 
-    requestAnimationFrame(animate);
+    
+    composer.render();
 }
 
 function onMouseDown(_event) {

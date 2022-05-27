@@ -1,9 +1,0 @@
-{
-    "liveServer.settings.https": {
-    "enable": true, //set it true to enable the feature.
-    "cert": "C:\\Users\\Lenna\\OneDrive\\Documents\\Studium\\6. Semester\\Echtzeit Computergrafik\\Realtime-BierBong\\snowpack.crt", //full path of the certificate
-    "key": "C:\\Users\\Lenna\\OneDrive\\Documents\\Studium\\6. Semester\\Echtzeit Computergrafik\\Realtime-BierBong\\snowpack.key", //full path of the private key
-    "passphrase": "123456"
-    },
-    "liveServer.settings.port": 5502
-    }

@@ -25,7 +25,7 @@
 		void main() {
 			gl_FragColor = texture2D( tDiffuse, vUv );
 			gl_FragColor.a *= opacity;
-            gl_FragColor = vec4(0.5,0.0,0.0,1.0);
+            //gl_FragColor = vec4(0.5,0.0,0.0,1.0);
 		}`
 
 };

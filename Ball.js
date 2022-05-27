@@ -3,14 +3,23 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.mod
 class Ball extends THREE.Mesh {
 
     currentSpeed = new THREE.Vector3(0, 0, 0);
-    currentPosition = new THREE.Vector3(0, 1.2, 1.3);
+    currentPosition = new THREE.Vector3(0, 1.6, 1.3);
     gravity;
     deltaTime = 0.02;
 
+    isKinematic = false;
 
-    constructor(_geometry, _material, _gravity) {
-        super(_geometry, _material);
+    static radius = 0.02;
+
+    static instance;
+
+    constructor(_material, _gravity) {
+
+        super(new THREE.SphereGeometry(Ball.radius, 32, 16), _material);
+
         this.gravity = _gravity;
+
+        Ball.instance = this;
     }
 
     updatePhysics(_deltaTime) {
@@ -51,11 +60,8 @@ class Ball extends THREE.Mesh {
 
         if (this.currentPosition.y <= 0.67) {
 
-            this.currentSpeed.y *= -1;
-
-            //this.currentSpeed.multiplyScalar(-1);
-            // console.log(this.currentSpeed.length());
-            // console.log("switchedDirection!");
+            this.currentSpeed.y *= -0.8;
+            this.currentPosition.y += Math.abs(this.currentSpeed.y * this.deltaTime);
             return;
         }
 

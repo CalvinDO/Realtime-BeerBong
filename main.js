@@ -2,14 +2,16 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.mod
 import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 import { Ball } from './Ball.js'
-import {ARButton} from './ARButton.js'
+import { Cup } from './Cup.js'
+import { ARButton } from './ARButton.js'
+
 
 document.addEventListener("keydown", onKeyDown)
 
 let scene;
 let ball;
 let materials = {};
-let shading = 'flat';
+let shading = 'smooth';
 let renderer;
 let camera;
 let controls;
@@ -17,6 +19,8 @@ const loader = new GLTFLoader();
 
 let orbitControls = false;
 let ballThrow = true;
+
+
 
 if (ballThrow) {
     window.addEventListener("mousedown", onMouseDown);
@@ -165,7 +169,7 @@ let mouseDownPos = new THREE.Vector2();
 let mouseUpPos = new THREE.Vector2();
 
 
-
+let cups = [];
 
 init();
 
@@ -224,8 +228,22 @@ function loadModel(model, position) {
         // console.log(glb)
         const root = glb.scene
         // root.scale.set(1.5, 1.5, 1.5)
-        root.position.set(position.x, position.y, position.z)
-        scene.add(root)
+
+        if (model == 'RedCup.glb' || model == 'BlueCup.glb') {
+
+            let newCup = new Cup(root);
+            newCup.position.set(position.x, position.y, position.z)
+
+            cups.push(newCup);
+            scene.add(newCup);
+
+            //console.log("own Cup Object: ", newCup);
+
+        } else {
+            root.position.set(position.x, position.y, position.z)
+            scene.add(root);
+        }
+
     }, function (xhr) {
         // console.log((xhr.loaded / xhr.total * 100) + '% loaded')
     }, function (error) {
@@ -253,8 +271,8 @@ function setupSceneCamRenderer() {
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.y = 1.3;
-    camera.position.z = 2.3;
-    camera.rotation.x = -0.5
+    camera.position.z = 1.6;
+    camera.rotation.x = -0.5;
 
 
     renderer = new THREE.WebGLRenderer();
@@ -302,9 +320,7 @@ function instantiateMaterials() {
 
 function addBall() {
 
-    const geometry = new THREE.SphereGeometry(0.02, 32, 16);
-
-    ball = new Ball(geometry, materials[shading], gravity);
+    ball = new Ball(materials[shading], gravity);
 
     scene.add(ball);
     //ball.position.copy(currentPosition)
@@ -390,6 +406,7 @@ function animate() {
     }
 
 
+    cups.forEach(cup => cup.update());
 
     //shading = effectController.newShading;
 

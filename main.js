@@ -5,10 +5,13 @@ import { EffectComposer } from 'https://cdn.jsdelivr.net/npm/three@0.118/example
 import { RenderPass } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/ShaderPass.js';
 import { GlitchPass } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/GlitchPass.js';
-import { CustomShader } from './customShader.js';
+import { CustomShader, CustomShader2, CustomShader3 } from './customShader.js';
+import { shaderVariablesSingleton } from './ShaderVariables.js';
 
+//import { frameTime, drunk, drunkLevel } from './frameTime.js';
 import { Ball } from './Ball.js'
 import {ARButton} from './ARButton.js'
+
 
 document.addEventListener("keydown", onKeyDown)
 
@@ -24,6 +27,11 @@ const loader = new GLTFLoader();
 
 let orbitControls = false;
 let ballThrow = true;
+
+//let CustomShader;
+let customShader;
+let customShader2;
+let customShader3;
 
 if (ballThrow) {
     window.addEventListener("mousedown", onMouseDown);
@@ -193,7 +201,7 @@ function init() {
 
     loadModel('Table.glb', pTable)
 
-    addDrunkEffect();
+    //addDrunkEffect();
 
     if (orbitControls) {
         installOrbitControls();
@@ -277,11 +285,17 @@ function setupSceneCamRenderer() {
     const renderPass = new RenderPass( scene, camera );
     composer.addPass( renderPass ); 
 
-    const customShader = new ShaderPass( CustomShader ); // in customshader.js kann man einen shader entwickeln der dann angewendet wird
+    customShader = new ShaderPass( CustomShader ); // in customshader.js kann man einen shader entwickeln der dann angewendet wird
     composer.addPass( customShader );
 
-    const glitchPass = new GlitchPass(); // Nur zum beispiel das postprocessing funktioniert
-    composer.addPass( glitchPass );
+    customShader2 = new ShaderPass( CustomShader2 ); // in customshader.js kann man einen shader entwickeln der dann angewendet wird
+    composer.addPass( customShader2 );
+
+    customShader3 = new ShaderPass( CustomShader3 ); // in customshader.js kann man einen shader entwickeln der dann angewendet wird
+    composer.addPass( customShader3 );
+
+    //const glitchPass = new GlitchPass(); // Nur zum beispiel das postprocessing funktioniert
+    //composer.addPass( glitchPass );
     
 }
 
@@ -399,9 +413,13 @@ function calculateDeltaTime() {
     now = Date.now();
 }
 
-function animate() {
+function animate(time) {
+    customShader.uniforms.amount.value = time/1000;
+    customShader3.uniforms.amount.value = time/1000;
     requestAnimationFrame(animate);
-    calculateDeltaTime();
+    
+    calculateDeltaTime()
+    
 
     if (ball) {
         ball.rotateY(1 * deltaTime)
@@ -409,6 +427,7 @@ function animate() {
 
         ball.updatePhysics(deltaTime);
     }
+
 
 
 
@@ -421,7 +440,7 @@ function animate() {
    
 
     
-    composer.render();
+    composer.render(deltaTime);
 }
 
 function onMouseDown(_event) {

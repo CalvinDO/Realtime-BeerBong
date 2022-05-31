@@ -1,2 +1,7 @@
 three.js-master
 three_js-master
+
+.vscode
+.vscode/
+.vscode/*
+**/.vscode/

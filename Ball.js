@@ -13,6 +13,10 @@ class Ball extends THREE.Mesh {
 
     static instance;
 
+    static bouncesTillReset = 7;
+
+    bounces = 0;
+
     constructor(_material, _gravity) {
 
         super(new THREE.SphereGeometry(Ball.radius, 32, 16), _material);
@@ -43,9 +47,15 @@ class Ball extends THREE.Mesh {
         this.currentSpeed.set(0, 1.2, 0);
         this.gravity.set(0, -9.81, 0)
         this.deltaTime = 0.02
+
+
+        this.bounces = 0;
     }
 
     toss(_swipe) {
+
+        this.setBack();
+
         _swipe.multiplyScalar(0.005);
         let swipe3D = new THREE.Vector3(_swipe.x, -_swipe.y * 2, _swipe.y);
         this.currentSpeed = swipe3D;
@@ -62,6 +72,12 @@ class Ball extends THREE.Mesh {
 
             this.currentSpeed.y *= -0.8;
             this.currentPosition.y += Math.abs(this.currentSpeed.y * this.deltaTime);
+
+            this.bounces += 1;
+
+            if (this.bounces > Ball.bouncesTillReset){
+                this.setBack();
+            }
             return;
         }
 

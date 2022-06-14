@@ -130,6 +130,9 @@ function init() {
 
     
     let aMarker = document.getElementById("a_Marker");
+
+
+    
     for (let i = 0; i < pCups.length; i++) {
         if (i <= 10) {
             aMarker.innerHTML += "<a-entity position='" + pCups[i].x + " " + pCups[i].y + " " + pCups[i].z + "' scale='1.0 1.0 1.0' gltf-model='./Assets/RedCup.glb'></a-entity>"

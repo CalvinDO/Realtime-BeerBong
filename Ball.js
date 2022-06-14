@@ -30,7 +30,7 @@ class Ball extends THREE.Mesh {
 
         this.deltaTime = _deltaTime;
 
-        console.log(this.currentPosition, this.currentSpeed, this.position);
+        //console.log(this.currentPosition, this.currentSpeed, this.position);
 
         if (this.isKinematic) {
             return;

@@ -1,3 +1,16 @@
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
+import { EffectComposer } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/ShaderPass.js';
+import { GlitchPass } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/GlitchPass.js';
+import { CustomShader, CustomShader2, CustomShader3 } from './customShader.js';
+//import { shaderVariablesSingleton } from './ShaderVariables.js';
+
+let aMarker = document.getElementById("a_Marker");
+let scene = document.getElementById("a_Scene");
+let composer;
+let renderer;
+
 let pCups = [
     // yours
     // 1. row
@@ -124,9 +137,45 @@ let pCups = [
     }
 ]
 
+
+//function initRenderTarget() {
+//    AFRAME.registerComponent("renderTargetComponent", {
+//        init: function() {
+//            const renderer = this.sceneEl.renderer;
+//            this.composer = new THREE.EffectComposer(renderer);
+//            // add some passes ..
+//            // (...)
+//            // override `render`
+//            this.bind();
+//        },
+//        // we need to keep the timestamps for the composer.render() function
+//        tick: function (t, dt) {
+//            this.t = t;
+//            this.dt = dt;
+//        },
+//        // Bind the EffectComposer to the A-Frame render loop.
+//        bind: function () {
+//            const renderer = this.sceneEl.renderer;
+//            const render = renderer.render;
+//            const system = this;
+//            let isDigest = false;
+//            
+//            renderer.render = function () {
+//                if (isDigest) {
+//                  render.apply(this, arguments);
+//                } else {
+//                  isDigest = true;
+//                  system.composer.render(system.dt);
+//                  isDigest = false;
+//                }
+//            };
+//        }
+//    })
+//}
+
 function init() {
     console.log("init");
-    let aMarker = document.getElementById("a_Marker");
+    console.log(scene.object3D);
     for (let i = 0; i < pCups.length; i++) {
         if (i <= 10) {
             aMarker.innerHTML += "<a-entity position='" + pCups[i].x + " " + pCups[i].y + " " + pCups[i].z + "' scale='1.0 1.0 1.0' gltf-model='./Assets/RedCup.glb'></a-entity>"
@@ -134,6 +183,13 @@ function init() {
             aMarker.innerHTML += "<a-entity position='" + pCups[i].x + " " + pCups[i].y + " " + pCups[i].z + "' scale='1.0 1.0 1.0' gltf-model='./Assets/BlueCup.glb'></a-entity>"
         }
     }
+
+    animate()
+}
+
+function animate() {
+    //console.log("hi");
+    requestAnimationFrame(animate);
 }
 
 init();

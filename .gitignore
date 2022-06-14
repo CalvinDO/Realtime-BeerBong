@@ -5,3 +5,5 @@ three_js-master
 .vscode/
 .vscode/*
 **/.vscode/
+snowpack.crt
+snowpack.key

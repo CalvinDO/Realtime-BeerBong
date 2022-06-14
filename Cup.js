@@ -30,16 +30,27 @@ class Cup extends THREE.Group {
         let ballXZ = new THREE.Vector2(Ball.instance.position.x, Ball.instance.position.z);
         let thisXZ = new THREE.Vector2(this.position.x, this.position.z);
 
-        let distance = ballXZ.sub(thisXZ);
+        let XZMiddleDistance = ballXZ.sub(thisXZ);
 
-        if (distance.length() < this.openingRadius) {
+        if (XZMiddleDistance.length() < this.openingRadius - Ball.radius) {
 
             if (Ball.instance.position.y < this.position.y + this.height) {
 
-                this.visible = false;
-                Ball.instance.setBack();
-            }
+                if (Ball.instance.position.y >= this.position.y) {
 
+                    this.visible = false;
+                    Ball.instance.setBack();
+                }
+            }
+        } else if (XZMiddleDistance.length() < this.openingRadius + Ball.radius) {
+
+            if (Ball.instance.position.y < this.position.y + this.height) {
+
+                if (Ball.instance.position.y >= this.position.y) {
+
+                    Ball.instance.currentSpeed = Ball.instance.position.clone().sub(this.position);
+                }
+            }
         }
     }
 }

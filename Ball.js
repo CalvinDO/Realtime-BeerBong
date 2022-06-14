@@ -3,11 +3,11 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.mod
 class Ball extends THREE.Mesh {
 
     currentSpeed = new THREE.Vector3(0, 0, 0);
-    currentPosition = new THREE.Vector3(0, 1.6, 1.3);
+    currentPosition = new THREE.Vector3(0, 1.2, 1.3);
     gravity;
     deltaTime = 0.02;
 
-    isKinematic = false;
+    isKinematic = true;
 
     static radius = 0.02;
 
@@ -23,7 +23,14 @@ class Ball extends THREE.Mesh {
     }
 
     updatePhysics(_deltaTime) {
+
         this.deltaTime = _deltaTime;
+
+        console.log(this.currentPosition, this.currentSpeed, this.position);
+
+        if (this.isKinematic) {
+            return;
+        }
 
         this.updateSpeed();
 
@@ -39,16 +46,26 @@ class Ball extends THREE.Mesh {
     }
 
     setBack() {
-        this.currentPosition.set(0, 1, 1.3)
-        this.currentSpeed.set(0, 1.2, 0);
-        this.gravity.set(0, -9.81, 0)
-        this.deltaTime = 0.02
+
+        this.currentPosition.set(0, 1.2, 1.3)
+        this.currentSpeed.set(0, 0, 0);
+
+        this.updatePosition();
+
+        //this.gravity.set(0, -9.81, 0);
+        //this.deltaTime = 0.02;
+
+        this.isKinematic = true;
     }
 
     toss(_swipe) {
+
         _swipe.multiplyScalar(0.005);
+
         let swipe3D = new THREE.Vector3(_swipe.x, -_swipe.y * 2, _swipe.y);
         this.currentSpeed = swipe3D;
+
+        this.isKinematic = false;
     }
 
 
@@ -58,7 +75,9 @@ class Ball extends THREE.Mesh {
         //console.log(this.currentSpeed, this.deltaTime);
 
 
+
         if (this.currentPosition.y <= 0.67) {
+
 
             this.currentSpeed.y *= -0.8;
             this.currentPosition.y += Math.abs(this.currentSpeed.y * this.deltaTime);
@@ -67,6 +86,8 @@ class Ball extends THREE.Mesh {
 
         let scaledGravity = this.gravity.clone().multiplyScalar(this.deltaTime);
         //console.log("scaledGravity: ", scaledGravity);
+
+
         this.currentSpeed.add(scaledGravity);
 
 

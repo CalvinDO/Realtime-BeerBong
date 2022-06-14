@@ -25,6 +25,10 @@ let ballThrow = true;
 if (ballThrow) {
     window.addEventListener("mousedown", onMouseDown);
     window.addEventListener("mouseup", onMouseUp);
+
+    window.addEventListener("touchstart", onTouchStart);
+    window.addEventListener("touchend", onTouchEnd);
+
 }
 
 
@@ -417,6 +421,21 @@ function animate() {
     renderer.render(scene, camera);
 
     requestAnimationFrame(animate);
+}
+
+
+
+function onTouchStart(_event){
+    mouseDownPos = new THREE.Vector2(_event.touches[0].clientX, _event.touches[0].clientY);
+}
+
+function onTouchEnd(_event){
+    mouseUpPos = new THREE.Vector2(_event.changedTouches[0].clientX, _event.changedTouches[0].clientY);
+
+    let swipe = mouseUpPos.sub(mouseDownPos);
+    // console.log(swipe);
+    //console.log(ball.position);
+    ball.toss(swipe);
 }
 
 function onMouseDown(_event) {

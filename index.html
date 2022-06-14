@@ -16,6 +16,12 @@
 <body>
     <script src="Shader.js"></script>
     <script type="module" src="main.js"></script>
+    <script>
+        function x() { var script = document.createElement('script'); script.src="//cdn.jsdelivr.net/npm/eruda";
+        document.body.appendChild(script); 
+        script.onload = function () { eruda.init() } }
+        x();
+    </script>
 </body>
 
 </html>

@@ -126,6 +126,9 @@ let pCups = [
 
 function init() {
     console.log("init");
+
+
+    
     let aMarker = document.getElementById("a_Marker");
     for (let i = 0; i < pCups.length; i++) {
         if (i <= 10) {

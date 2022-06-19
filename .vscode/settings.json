@@ -1,9 +1,15 @@
 {
+    "liveServer.settings.ignoreFiles": [
+        ".vscode/**",
+        "**/*.scss",
+        "**/*.sass",
+        "**/*.ts"
+    ],
     "liveServer.settings.https": {
-    "enable": true, //set it true to enable the feature.
-    "cert": "\\Users\\matej\\Documents\\Studi\\SoSe22\\Echtzeit-Computergrafik\\Echtzeit_Computergrafik\\Beerphong\\Realtime-BeerBong\\snowpack.crt", //full path of the certificate
-    "key": "\\Users\\matej\\Documents\\Studi\\SoSe22\\Echtzeit-Computergrafik\\Echtzeit_Computergrafik\\Beerphong\\Realtime-BeerBong\\snowpack.key", //full path of the private key
-    "passphrase": "123456"
+        "enable": true, //set it true to enable the feature.
+        "cert": "D:\\SechstesSemester\\Realtime-BeerBong\\snowpack.crt", //full path of the certificate
+        "key": "D:\\SechstesSemester\\Realtime-BeerBong\\snowpack.key", //full path of the private key
+        "passphrase": "123456"
     },
     "liveServer.settings.port": 5502
 }

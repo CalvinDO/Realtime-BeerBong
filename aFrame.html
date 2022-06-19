@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <title>Document</title>
 
     <script src="https://aframe.io/releases/1.0.0/aframe.min.js"></script>
@@ -19,7 +20,7 @@
 </head>
 <body>
     <a-scene embedded arjs id="a_Scene">
-        <a-marker preset='custom' type='pattern' url='Assets/beerpong.patt' id="a_Marker">
+        <a-marker preset='custom' type='pattern' url='Assets/beerbong.patt' id="a_Marker">
             <!-- we use cors proxy to avoid cross-origin problems ATTENTION! you need to set up your server -->
             <a-entity
                 position="0 0 0"
@@ -38,10 +39,7 @@
     </a-scene>
 
     <script>
-        function x() { var script = document.createElement('script'); script.src="//cdn.jsdelivr.net/npm/eruda";
-        document.body.appendChild(script); 
-        script.onload = function () { eruda.init() } }
-        x();
+        
     </script>
 </body>
 </html>

@@ -5,6 +5,7 @@ import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples
 import { Ball } from './Ball.js'
 import { Cup } from './Cup.js'
 import { ARButton } from './ARButton.js'
+import { Marker } from './Marker.js';
 
 //document.addEventListener("keydown", onKeyDown)
 
@@ -23,6 +24,7 @@ let ballThrow = true;
 
 let customConsole;
 
+let aMarker;
 
 if (ballThrow) {
     window.addEventListener("mousedown", onMouseDown);
@@ -201,14 +203,43 @@ function installOrbitControls() {
 
 function loadModel(model, position) {
     loader.load('Assets/' + model, function (glb) {
-        // console.log(glb)
+
         const root = glb.scene
         // root.scale.set(1.5, 1.5, 1.5)
 
+
         if (model == 'RedCup.glb' || model == 'BlueCup.glb') {
 
-            let newCup = new Cup(root);
+
+            let newCupaFrame = document.createElement("a-entity");
+            newCupaFrame.setAttribute("position", position.x + " " + position.y + " " + position.z);
+            newCupaFrame.setAttribute("scale", "1.0 1.0 1.0");
+            newCupaFrame.setAttribute("gltf-model", './Assets/' + model);
+            Marker.instance.appendChild(newCupaFrame);
+
+
+            let newCup = new Cup(root, newCupaFrame);
             newCup.position.set(position.x, position.y, position.z)
+
+            /*
+            for (let i = 0; i < pCups.length; i++) {
+                let newCupaFrame = document.createElement("a-entity");
+                newCupaFrame.setAttribute("position", pCups[i].x + " " + pCups[i].y + " " + pCups[i].z);
+                newCupaFrame.setAttribute("scale", "1.0 1.0 1.0");
+
+                if (i <= 10) {
+
+                    newCupaFrame.setAttribute("gltf-model", './Assets/RedCup.glb');
+
+                    //aMarker.innerHTML += "<a-entity position='" + pCups[i].x + " " + pCups[i].y + " " + pCups[i].z + "' scale='1.0 1.0 1.0' gltf-model='./Assets/RedCup.glb'></a-entity>"
+                } else {
+
+                    newCupaFrame.setAttribute("gltf-model", './Assets/BlueCup.glb');
+
+                    //aMarker.innerHTML += "<a-entity position='" + pCups[i].x + " " + pCups[i].y + " " + pCups[i].z + "' scale='1.0 1.0 1.0' gltf-model='./Assets/BlueCup.glb'></a-entity>"
+                }
+            }
+            */
 
             cups.push(newCup);
             threeScene.add(newCup);
@@ -302,6 +333,7 @@ function addBall() {
     //ball.position.copy(currentPosition)
     ball.updatePosition();
 
+    //alert("Ball start position z== " + ball.position.z);
     //customConsole.log(ball.currentPosition);
 }
 
@@ -373,6 +405,7 @@ function calculateDeltaTime() {
 }
 
 function animate() {
+    //alert("start of animate");
 
     calculateDeltaTime();
 
@@ -382,7 +415,7 @@ function animate() {
 
         ball.updatePhysics(deltaTime);
     }
-    log(ball.position.z);
+    //log(ball.position.z);
 
 
     cups.forEach(cup => cup.update());
@@ -394,6 +427,8 @@ function animate() {
     }
 
     renderer.render(threeScene, camera);
+
+
 
     requestAnimationFrame(animate);
 }
@@ -469,28 +504,27 @@ init();
 
 
 function init() {
-    // alert("main init working!!");
+    //alert("main init working!!");
 
     //customConsole = document.querySelector("#console");
 
 
 
+    //alert("main init working!");
 
 
-    let aMarker = document.getElementById("a_Marker");
-    for (let i = 0; i < pCups.length; i++) {
-        if (i <= 10) {
 
-            aMarker.innerHTML += "<a-entity position='" + pCups[i].x + " " + pCups[i].y + " " + pCups[i].z + "' scale='1.0 1.0 1.0' gltf-model='./Assets/RedCup.glb'></a-entity>"
-        } else {
-            aMarker.innerHTML += "<a-entity position='" + pCups[i].x + " " + pCups[i].y + " " + pCups[i].z + "' scale='1.0 1.0 1.0' gltf-model='./Assets/BlueCup.glb'></a-entity>"
-        }
-    }
+
+    // alert("setup fake cups");
 
 
     //setupGui();
 
-    this.log(Date.now() + " !!!!");
+
+    //aMarker = document.getElementById("a_Marker");
+    Marker.instance = document.getElementById("a_Marker");
+
+    //log(Date.now() + " !!!!");
     setupSceneCamRenderer();
 
     addLights();
@@ -499,18 +533,26 @@ function init() {
 
 
 
+
     addBall();
 
     addCups();
+
+
     loadModel('Table.glb', pTable)
 
-    addDrunkEffect();
+
+    //addDrunkEffect();
+
+
 
     if (orbitControls) {
         installOrbitControls();
     }
+    //alert("added ball and cups and table and orbit controls!");
 
-    requestAnimationFrame(animate());
+    animate();
+    //requestAnimationFrame(animate());
 
     /* */
 }

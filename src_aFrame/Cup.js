@@ -13,6 +13,8 @@ class Cup extends THREE.Group {
         super();
 
         this.add(_group);
+
+
     }
 
     update() {
@@ -22,6 +24,8 @@ class Cup extends THREE.Group {
         }
 
         this.checkCollisions();
+
+        //this.updateHTML();
     }
 
 
@@ -53,6 +57,8 @@ class Cup extends THREE.Group {
             }
         }
     }
+
+    
 }
 
 export { Cup }

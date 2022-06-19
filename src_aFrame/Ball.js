@@ -9,6 +9,9 @@ class Ball extends THREE.Mesh {
 
     isKinematic = true;
 
+    element;
+
+
     static radius = 0.02;
 
     static instance;
@@ -22,8 +25,12 @@ class Ball extends THREE.Mesh {
         super(new THREE.SphereGeometry(Ball.radius, 32, 16), _material);
 
         this.gravity = _gravity;
-
+        
         Ball.instance = this;
+
+        this.element = document.querySelector("a-sphere");
+
+        console.log("Ball instantiated!");
     }
 
     updatePhysics(_deltaTime) {
@@ -39,6 +46,8 @@ class Ball extends THREE.Mesh {
         this.updateSpeed();
 
         this.updatePosition();
+
+        this.updateHTML();
 
     }
 
@@ -75,8 +84,16 @@ class Ball extends THREE.Mesh {
         this.currentSpeed = swipe3D;
 
         this.isKinematic = false;
+        
+        this.log("BAll says: tossed!");
     }
-
+    
+     
+    log(message){
+        let display = document.querySelector("#display");
+        display.innerHTML = message.toString();
+    
+    }
 
     updateSpeed() {
         //console.log("gravity: ", this.gravity);
@@ -108,6 +125,13 @@ class Ball extends THREE.Mesh {
 
 
         //console.log("gravity: ", this.gravity);
+    }
+
+    updateHTML() {
+        this.element.setAttribute("position", this.position.x + " " + this.position.y + " " + this.position.z);
+        console.log(this.element.attributes);
+
+        this.log(this.currentPosition.y);
     }
 }
 

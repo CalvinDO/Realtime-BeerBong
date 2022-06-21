@@ -7,3 +7,5 @@ three_js-master
 **/.vscode/
 snowpack.crt
 snowpack.key
+.vscode/settings.json
+https/

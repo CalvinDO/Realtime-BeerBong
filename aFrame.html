@@ -14,18 +14,18 @@
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
     <!-- script src="./src_aFrame/test.js" defer></script -->
     <script src="./src_aFrame/main.js" type="module"></script>
-    
+
     <style>
         body {
             overflow: hidden;
         }
-        </style>
+    </style>
 </head>
 
 <body>
-    <p id ="display" style ="position: fixed; top: 10px; left: 10px; font-size: 40px; color: white;">
+    <p id="display" style="position: fixed; top: 10px; left: 10px; font-size: 40px; color: white;">
     </p>
-    <script id = "console">
+    <script id="console">
         function x() {
             var script = document.createElement('script'); script.src = "//cdn.jsdelivr.net/npm/eruda";
             document.body.appendChild(script);
@@ -33,7 +33,7 @@
         }
         x();
     </script>
-    <a-scene embedded arjs id="a_Scene" antialias="true" >
+    <a-scene embedded arjs id="a_Scene" antialias="true">
         <a-marker preset='custom' type='pattern' url='Assets/beerpong.patt' id="a_Marker">
             <!-- we use cors proxy to avoid cross-origin problems ATTENTION! you need to set up your server -->
             <a-entity position="0 0 0" scale='1 1 1' gltf-model="./Assets/Table.glb"></a-entity>
@@ -41,7 +41,7 @@
             <a-sphere id="ball" scale='0.02 0.02 0.02' position="0 1.5 0"></a-sphere>
 
         </a-marker>
-        <a-entity camera id="camera"></a-entity>
+        <a-entity rotation-position-reader camera id="camera"></a-entity>
     </a-scene>
 
 </body>

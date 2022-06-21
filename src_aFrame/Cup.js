@@ -59,9 +59,9 @@ class Cup extends THREE.Group {
     }
 
     updateHTML() {
+
         if (!this.visible) {
             this.cupAFrame.setAttribute("display", "none");
-
         }
     }
 

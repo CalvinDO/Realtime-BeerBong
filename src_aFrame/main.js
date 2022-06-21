@@ -10,6 +10,8 @@ import { Camera } from './Camera.js';
 
 //document.addEventListener("keydown", onKeyDown)
 
+
+
 let threeScene;
 let ball;
 let materials = {};
@@ -278,7 +280,7 @@ function setupSceneCamRenderer() {
     threeScene.background = new THREE.Color(0xdddddd)
 
     Camera.instance = document.querySelector("#camera");
-
+    Camera.instance.setAttribute("rotation-position-reader");
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.y = 1.3;
@@ -430,13 +432,13 @@ function animate() {
         controls.update()
     }
 
-    console.log(Camera.instance.getAttribute("position"));
+    //console.log(Camera.instance.getAttribute("camera"));
 
     var worldPos = new THREE.Vector3();
     worldPos.setFromMatrixPosition(Camera.instance.object3D.matrixWorld);
-    console.log(Camera.instance.object3D.matrixWorld);
+    //console.log(Camera.instance.object3D.matrixWorld);
 
-    log(worldPos.x);
+    //log(worldPos.x);
 
     renderer.render(threeScene, camera);
 
@@ -531,6 +533,26 @@ function init() {
 
 
     //setupGui();
+
+    AFRAME.registerComponent('rotation-position-reader', {
+        tick: function () {
+            console.log("hellooo")
+            // `this.el` is the element.
+            // `object3D` is the three.js object.
+
+            // `rotation` is a three.js Euler using radians. `quaternion` also available.
+            //console.log(this.el.object3D.rotation);
+
+            // `position` is a three.js Vector3.
+            var position = new THREE.Vector3();
+            var worldPos = new THREE.Vector3();
+            //worldPos.setFromMatrixPosition(this.el.object3D.matrixWorld);
+            worldPos = this.el.object3D.getWorldPosition(this.el.position);
+            //log(this.el.object3D.position.x + " " + this.el.object3D.position.y + " " + this.el.object3D.position.z);
+            log(worldPos.x + " ; " + worldPos.y + " ; " + worldPos.z);
+        }
+    });
+
 
 
     //aMarker = document.getElementById("a_Marker");

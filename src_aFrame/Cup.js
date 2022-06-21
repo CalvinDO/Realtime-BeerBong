@@ -1,18 +1,21 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js'
 import { Ball } from './Ball.js'
+import { Marker } from './Marker.js';
 
 
 class Cup extends THREE.Group {
 
     openingRadius = 0.092 / 2;
     height = 0.117;
+    cupAFrame;
 
-
-    constructor(_group) {
+    constructor(_group, _cupAFrame) {
 
         super();
 
         this.add(_group);
+        this.cupAFrame = _cupAFrame;
+
     }
 
     update() {
@@ -22,6 +25,8 @@ class Cup extends THREE.Group {
         }
 
         this.checkCollisions();
+
+        //this.updateHTML();
     }
 
 
@@ -32,17 +37,16 @@ class Cup extends THREE.Group {
 
         let XZMiddleDistance = ballXZ.sub(thisXZ);
 
-        if (XZMiddleDistance.length() < this.openingRadius - Ball.radius) {
+        if (XZMiddleDistance.length() < this.openingRadius /*- (Ball.radius / 2)*/) {
 
             if (Ball.instance.position.y < this.position.y + this.height) {
 
                 if (Ball.instance.position.y >= this.position.y) {
 
-                    this.visible = false;
-                    Ball.instance.setBack();
+                    this.hit();
                 }
             }
-        } else if (XZMiddleDistance.length() < this.openingRadius + Ball.radius) {
+        } /*else if (XZMiddleDistance.length() < this.openingRadius + Ball.radius) {
 
             if (Ball.instance.position.y < this.position.y + this.height) {
 
@@ -51,8 +55,28 @@ class Cup extends THREE.Group {
                     Ball.instance.currentSpeed = Ball.instance.position.clone().sub(this.position);
                 }
             }
+        }*/
+    }
+
+    updateHTML() {
+        if (!this.visible) {
+            this.cupAFrame.setAttribute("display", "none");
+
         }
     }
+
+    hit() {
+
+        this.visible = false;
+
+        Ball.instance.setBack();
+
+        this.cupAFrame.setAttribute("display", "none");
+        Marker.instance.removeChild(this.cupAFrame);
+
+        //alert(this.cupAFrame.getAttribute("display"));
+    }
+
 }
 
 export { Cup }

@@ -1,14 +1,14 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
 import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
-import { Ball } from './Ball.js'
-import { Cup } from './Cup.js'
-import { ARButton } from './ARButton.js'
+import { Ball } from './src_aFrame/Ball.js'
+import { Cup } from './src_aFrame/Cup.js'
+import { ARButton } from './src_aFrame/ARButton.js'
 
 
 document.addEventListener("keydown", onKeyDown)
 
-let scene;
+let threeScene;
 let ball;
 let materials = {};
 let shading = 'smooth';
@@ -239,13 +239,13 @@ function loadModel(model, position) {
             newCup.position.set(position.x, position.y, position.z)
 
             cups.push(newCup);
-            scene.add(newCup);
+            threeScene.add(newCup);
 
             //console.log("own Cup Object: ", newCup);
 
         } else {
             root.position.set(position.x, position.y, position.z)
-            scene.add(root);
+            threeScene.add(root);
         }
 
     }, function (xhr) {
@@ -269,9 +269,9 @@ function loadModel(model, position) {
 
 function setupSceneCamRenderer() {
 
-    scene = new THREE.Scene();
+    threeScene = new THREE.Scene();
 
-    scene.background = new THREE.Color(0xdddddd)
+    threeScene.background = new THREE.Color(0xdddddd)
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.y = 1.3;
@@ -291,26 +291,26 @@ function addLights() {
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     directionalLight.position.set(0, 1, 0)
     directionalLight.castShadow = true;
-    scene.add(directionalLight);
+    threeScene.add(directionalLight);
 
     const ambientLight = new THREE.AmbientLight(0x404040, 1);
-    scene.add(ambientLight);
+    threeScene.add(ambientLight);
 
     const spotLight1 = new THREE.PointLight(0xc4c4c4c4, 0.2)
     spotLight1.position.set(0, 300, 500)
-    scene.add(spotLight1)
+    threeScene.add(spotLight1)
 
     const spotLight2 = new THREE.PointLight(0xc4c4c4c4, 0.2)
     spotLight2.position.set(500, 100, 0)
-    scene.add(spotLight2)
+    threeScene.add(spotLight2)
 
     const spotLight3 = new THREE.PointLight(0xc4c4c4c4, 0.2)
     spotLight3.position.set(0, 100, -500)
-    scene.add(spotLight3)
+    threeScene.add(spotLight3)
 
     const spotLight4 = new THREE.PointLight(0xc4c4c4c4, 0.2)
     spotLight4.position.set(-500, 300, 0)
-    scene.add(spotLight4)
+    threeScene.add(spotLight4)
 }
 
 
@@ -326,7 +326,7 @@ function addBall() {
 
     ball = new Ball(materials[shading], gravity);
 
-    scene.add(ball);
+    threeScene.add(ball);
     //ball.position.copy(currentPosition)
     ball.updatePosition();
 }
@@ -388,7 +388,7 @@ function addDrunkEffect() {
     const plane = new THREE.Mesh(planeGeometry, planeMaterial);
     plane.name = "drunkFilter";
     plane.position.set(0.0, 0.0, 4.9);
-    scene.add(plane);
+    threeScene.add(plane);
 }
 
 
@@ -418,7 +418,7 @@ function animate() {
         controls.update()
     }
 
-    renderer.render(scene, camera);
+    renderer.render(threeScene, camera);
 
     requestAnimationFrame(animate);
 }

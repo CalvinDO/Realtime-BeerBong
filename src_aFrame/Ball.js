@@ -9,13 +9,20 @@ class Ball extends THREE.Mesh {
 
     isKinematic = true;
 
+    element;
+
+
     static radius = 0.02;
 
     static instance;
 
     static bouncesTillReset = 7;
 
+    static tossFactor = 0.0075;
     bounces = 0;
+
+    framesAlive = 0;
+
 
     constructor(_material, _gravity) {
 
@@ -24,6 +31,9 @@ class Ball extends THREE.Mesh {
         this.gravity = _gravity;
 
         Ball.instance = this;
+
+        this.element = document.querySelector("a-sphere");
+
     }
 
     updatePhysics(_deltaTime) {
@@ -40,6 +50,14 @@ class Ball extends THREE.Mesh {
 
         this.updatePosition();
 
+
+
+        this.framesAlive++;
+        if (this.framesAlive > 50) {
+            //alert("frames alive = " + this.framesAlive + ".  CurrentPosition Z = " + this.currentPosition.z);
+        }
+
+        //this.log(this.framesAlive);
     }
 
     updatePosition() {
@@ -47,6 +65,8 @@ class Ball extends THREE.Mesh {
         this.currentPosition.add(this.currentSpeed.clone().multiplyScalar(this.deltaTime));
 
         this.position.copy(this.currentPosition);
+
+        this.updateHTML();
     }
 
     setBack() {
@@ -69,14 +89,23 @@ class Ball extends THREE.Mesh {
 
         this.setBack();
 
-        _swipe.multiplyScalar(0.005);
+        _swipe.multiplyScalar(Ball.tossFactor);
 
         let swipe3D = new THREE.Vector3(_swipe.x, -_swipe.y * 2, _swipe.y);
         this.currentSpeed = swipe3D;
 
         this.isKinematic = false;
+
+        this.log("BAll says: tossed!");
+        //alert("BAll says: tossed!");
     }
 
+
+    log(message) {
+        let display = document.querySelector("#display");
+        display.innerHTML = message.toString();
+
+    }
 
     updateSpeed() {
         //console.log("gravity: ", this.gravity);
@@ -108,6 +137,13 @@ class Ball extends THREE.Mesh {
 
 
         //console.log("gravity: ", this.gravity);
+    }
+
+    updateHTML() {
+        this.element.setAttribute("position", this.position.x + " " + this.position.y + " " + this.position.z);
+        console.log(this.element.attributes);
+
+        this.log(this.currentPosition.y);
     }
 }
 

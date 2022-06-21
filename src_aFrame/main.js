@@ -326,10 +326,10 @@ function instantiateMaterials() {
 }
 
 function addBall() {
-
     ball = new Ball(materials[shading], gravity);
 
     threeScene.add(ball);
+    
     //ball.position.copy(currentPosition)
     ball.updatePosition();
 

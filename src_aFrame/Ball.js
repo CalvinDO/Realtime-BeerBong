@@ -23,7 +23,6 @@ class Ball extends THREE.Mesh {
 
     framesAlive = 0;
 
-
     constructor(_material, _gravity) {
 
         super(new THREE.SphereGeometry(Ball.radius, 32, 16), _material);
@@ -33,7 +32,7 @@ class Ball extends THREE.Mesh {
         Ball.instance = this;
 
         this.element = document.querySelector("a-sphere");
-
+        this.element.setAttribute("scale", Ball.radius + "" + Ball.radius +"" + Ball.radius);
     }
 
     updatePhysics(_deltaTime) {

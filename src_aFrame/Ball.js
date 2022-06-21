@@ -32,7 +32,9 @@ class Ball extends THREE.Mesh {
         Ball.instance = this;
 
         this.element = document.querySelector("a-sphere");
-        this.element.setAttribute("scale", Ball.radius + "" + Ball.radius +"" + Ball.radius);
+        //this.log("'" + Ball.radius + " " + Ball.radius +" " + Ball.radius + "'")
+        this.element.setAttribute("scale", Ball.radius + " " + Ball.radius + " " + Ball.radius);
+        //this.log(this.element.getAttribute("scale").toString());
     }
 
     updatePhysics(_deltaTime) {
@@ -42,6 +44,7 @@ class Ball extends THREE.Mesh {
         //console.log(this.currentPosition, this.currentSpeed, this.position);
 
         if (this.isKinematic) {
+            //this.currentPosition = this.position = 
             return;
         }
 
@@ -140,9 +143,9 @@ class Ball extends THREE.Mesh {
 
     updateHTML() {
         this.element.setAttribute("position", this.position.x + " " + this.position.y + " " + this.position.z);
-        console.log(this.element.attributes);
+        //console.log(this.element.attributes);
 
-        this.log(this.currentPosition.y);
+        //this.log(this.currentPosition.y);
     }
 }
 

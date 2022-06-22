@@ -9,3 +9,4 @@ snowpack.crt
 snowpack.key
 .vscode/settings.json
 https/
+.DS_Store

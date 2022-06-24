@@ -87,6 +87,22 @@ class Ball extends THREE.Mesh {
         this.isKinematic = true;
     }
 
+    setBackTo(_position) {
+
+        this.currentPosition.set(_position.x, _position.y, _position.z)
+        this.currentSpeed.set(0, 0, 0);
+        //this.log(this.currentPosition.x.toFixed(2) + " ; " + this.currentPosition.y.toFixed(2) + " ; " + this.currentPosition.z.toFixed(2) + " || Time: " + Date.now());
+
+        this.updatePosition();
+
+        //this.gravity.set(0, -9.81, 0);
+        //this.deltaTime = 0.02;
+
+        this.bounces = 0;
+
+        this.isKinematic = true;
+    }
+
     toss(_swipe) {
 
         this.setBack();
@@ -100,6 +116,22 @@ class Ball extends THREE.Mesh {
 
         this.log("BAll says: tossed!");
         //alert("BAll says: tossed!");
+    }
+
+    tossDirect(_toss) {
+
+        let zeroPos = new THREE.Vector3();
+        //this.setBack();
+        let ballSetBackFactor = 0.5;
+
+        //this.setBackTo((new THREE.Vector3(_toss.x, _toss.y, _toss.z)).multiplyScalar(ballSetBackFactor));
+        this.setBackTo(zeroPos.sub(_toss));
+
+        //this.log(_toss.x.toFixed(2) + " ; " + _toss.y.toFixed(2) + " ; " + _toss.z.toFixed(2) + " || Time: " + Date.now());
+        //this.currentSpeed = zeroPos.sub(_toss);
+        //this.currentSpeed.multiplyScalar(0.0001);
+        //this.isKinematic = false;
+        this.isKinematic = true;
     }
 
 

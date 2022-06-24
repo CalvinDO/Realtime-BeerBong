@@ -9,7 +9,7 @@
     <title>Document</title>
 
     <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
-    <!-- <script src="https://aframe.io/releases/0.8.2/aframe.min.js"></script> -->
+    <!--script src="https://aframe.io/releases/0.8.2/aframe.min.js"></script-->
     <!-- we import arjs version without NFT but with marker + location based support -->
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
     <!-- script src="./src_aFrame/test.js" defer></script -->
@@ -34,14 +34,14 @@
         x();
     </script>
     <a-scene embedded arjs id="a_Scene" antialias="true">
-        <a-marker preset='custom' type='pattern' url='Assets/beerpong.patt' id="a_Marker">
+        <a-marker position rotation preset='custom' type='pattern' url='Assets/beerpong.patt' id="a_Marker">
             <!-- we use cors proxy to avoid cross-origin problems ATTENTION! you need to set up your server -->
             <a-entity position="0 0 0" scale='1 1 1' gltf-model="./Assets/Table.glb"></a-entity>
 
             <a-sphere id="ball" scale='0.02 0.02 0.02' position="0 1.5 0"></a-sphere>
 
         </a-marker>
-        <a-entity rotation-position-reader camera id="camera"></a-entity>
+        <a-entity position rotation camera id="camera"></a-entity>
     </a-scene>
 
 </body>

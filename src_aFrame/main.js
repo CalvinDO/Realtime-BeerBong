@@ -6,12 +6,12 @@ import { Ball } from './Ball.js'
 import { Cup } from './Cup.js'
 import { ARButton } from './ARButton.js'
 import { Marker } from './Marker.js';
-import { EffectComposer } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/RenderPass.js';
-import { ShaderPass } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/ShaderPass.js';
-import { TestShader, CustomShader, CustomShader2, CustomShader3} from "./customShader.js"
+import { Camera } from './Camera.js';
+import { Scene } from './Scene.js';
 
 //document.addEventListener("keydown", onKeyDown)
+
+
 
 let threeScene;
 let ball;
@@ -34,9 +34,11 @@ let customConsole;
 
 let aMarker;
 
+let camToMarker;
+
 if (ballThrow) {
     window.addEventListener("mousedown", onMouseDown);
-    window.addEventListener("mouseup", onMouseUp);
+    //window.addEventListener("mouseup", onMouseUp);
 
     window.addEventListener("touchstart", onTouchStart);
     window.addEventListener("touchend", onTouchEnd);
@@ -284,6 +286,9 @@ function setupSceneCamRenderer() {
 
     threeScene.background = new THREE.Color(0xdddddd)
 
+    Camera.instance = document.querySelector("a-entity[camera]");
+    Camera.instance.setAttribute("rotation-position-reader");
+
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.y = 1.3;
     camera.position.z = 1.6;
@@ -337,7 +342,7 @@ function addBall() {
     ball = new Ball(materials[shading], gravity);
 
     threeScene.add(ball);
-    
+
     //ball.position.copy(currentPosition)
     ball.updatePosition();
 
@@ -412,36 +417,6 @@ function calculateDeltaTime() {
     now = Date.now();
 }
 
-function animate() {
-    //alert("start of animate");
-
-    calculateDeltaTime();
-
-    if (ball) {
-        ball.rotateY(1 * deltaTime)
-        ball.rotateZ(1 * deltaTime)
-
-        ball.updatePhysics(deltaTime);
-    }
-    //log(ball.position.z);
-
-
-    cups.forEach(cup => cup.update());
-
-    //shading = effectController.newShading;
-
-    if (controls) {
-        controls.update()
-    }
-
-    renderer.render(threeScene, camera);
-
-
-
-    requestAnimationFrame(animate);
-}
-
-
 
 
 function onTouchStart(_event) {
@@ -454,7 +429,46 @@ function onTouchEnd(_event) {
     let swipe = mouseUpPos.sub(mouseDownPos);
     // console.log(swipe);
     //console.log(ball.position);
-    ball.toss(swipe);
+    // console.log(swipe);
+    //console.log(ball.position);
+
+    let markerPosition = Marker.instance.getAttribute("position");
+    //console.log(markerPosition);
+    let x = markerPosition.x;
+    let y = markerPosition.y;
+    let z = markerPosition.z;
+    //console.log(x, y, z);
+
+    let position = new THREE.Vector3(x, y, z);
+    /*
+    position.x = x;
+    position.y = y;
+    position.z = z;
+    position.set(x, y, z);
+    */
+    //console.log(position, x, y, z);
+    //console.log("before quat: ", position.x, position.y, position.z)
+    //console.log("real position: ", Marker.instance.object3D.getWorldPosition(new THREE.Vector3()));
+
+    //let rotation = Marker.instance.getAttribute("rotation");
+    //console.log("cam rotation: ", Camera.instance.object3D.getWorldQuaternion(new THREE.Quaternion()));
+    let rotation = Marker.instance.object3D.getWorldQuaternion(new THREE.Quaternion());
+
+    //console.log(rotation.angleTo(new THREE.Quaternion()));
+    //let invertedRotation = new THREE.Quaternion();
+    //invertedRotation.copy(rotation);
+    //invertedRotation.invert();
+    position.applyQuaternion(rotation.inverse()/*Marker.instance.getAttribute("rotation")*/);
+
+    //console.log("after quat: ", position.x, position.y, position.z);
+
+    //var worldPos = markerPosition.clone();
+    //worldPos.setFromMatrixPosition(Camera.instance.object3D.matrixWorld);
+    //console.log(Marker.instance.object3D.getWorldPosition(new THREE.Vector3()));
+
+    ball.tossDirect(position);
+
+    //ball.toss(swipe);
 
     //log(ball.position.z);
 
@@ -474,16 +488,39 @@ function log(message) {
 function onMouseDown(_event) {
     mouseDownPos = new THREE.Vector2(_event.clientX, _event.clientY);
 }
-
+/*
 function onMouseUp(_event) {
     mouseUpPos = new THREE.Vector2(_event.clientX, _event.clientY);
 
-    let swipe = mouseUpPos.sub(mouseDownPos);
+    //let swipe = mouseUpPos.sub(mouseDownPos);
     // console.log(swipe);
     //console.log(ball.position);
-    ball.toss(swipe);
-}
 
+
+    let markerPosition = Marker.instance.getAttribute("position");
+
+    //console.log(markerPosition);
+    let x = markerPosition.x;
+    let y = markerPosition.y;
+    let z = markerPosition.z;
+    //console.log(x, y, z);
+    let position = new THREE.Vector3(x, y, z);
+    //console.log(position, x, y, z);
+    position.x = x;
+    position.y = y;
+    position.z = z;
+
+
+
+    //var worldPos = markerPosition.clone();
+    //worldPos.setFromMatrixPosition(Camera.instance.object3D.matrixWorld);
+    //console.log(Marker.instance.object3D.getWorldPosition(new THREE.Vector3()));
+
+    //ball.tossDirect(markerPosition);
+    ball.tossDirect(Marker.instance.object3D.getWorldPosition(new THREE.Vector3()));
+    //ball.toss(swipe);
+}
+*/
 function onKeyDown(_event) {
     // console.log(_event)
     if (_event.code === 'Space') {
@@ -507,6 +544,47 @@ function setupGui() {
 }
 */
 
+function animate() {
+    //alert("start of animate");
+
+    calculateDeltaTime();
+
+    if (ball) {
+        ball.rotateY(1 * deltaTime)
+        ball.rotateZ(1 * deltaTime)
+
+        ball.updatePhysics(deltaTime);
+    }
+    //log(ball.position.z);
+
+
+    cups.forEach(cup => cup.update());
+
+    //shading = effectController.newShading;
+
+    if (controls) {
+        controls.update()
+    }
+
+
+
+    //worldPos = Camera.instance.object3D.getWorldPosition(position);
+    //log(worldPos.x.toFixed(2) + " ; " + worldPos.y.toFixed(2) + " ; " + worldPos.z.toFixed(2) + " || Time: " + Date.now());
+
+    //console.log(Camera.instance.getAttribute("camera"));
+
+
+    //console.log(Camera.instance.object3D.matrixWorld);
+
+    //log(worldPos.x);
+
+    renderer.render(threeScene, camera);
+
+
+    requestAnimationFrame(animate);
+}
+
+
 init();
 
 
@@ -516,21 +594,15 @@ function init() {
 
     //customConsole = document.querySelector("#console");
 
-
-
     //alert("main init working!");
-
-
-
 
     // alert("setup fake cups");
 
-
     //setupGui();
-
 
     //aMarker = document.getElementById("a_Marker");
     Marker.instance = document.getElementById("a_Marker");
+    Scene.instance = document.getElementById("a_Scene");
 
     //log(Date.now() + " !!!!");
     setupSceneCamRenderer();
@@ -539,9 +611,6 @@ function init() {
 
     instantiateMaterials();
 
-
-
-
     addBall();
 
     addCups();
@@ -549,15 +618,52 @@ function init() {
 
     loadModel('Table.glb', pTable)
 
-
     //addDrunkEffect();
-
-
 
     if (orbitControls) {
         installOrbitControls();
     }
     //alert("added ball and cups and table and orbit controls!");
+
+    /*
+    AFRAME.registerComponent('rotation-position-reader', {
+        tick: function () {
+            // `this.el` is the element.
+            // `object3D` is the three.js object.
+
+            // `rotation` is a three.js Euler using radians. `quaternion` also available.
+            //console.log(this.el.object3D.rotation);
+
+            // `position` is a three.js Vector3.
+            let markerPosition = Marker.instance.getAttribute("position");
+            //console.log(markerPosition);
+
+            let x = markerPosition.x;
+            let y = markerPosition.y;
+            let z = markerPosition.z;
+            //console.log(x, y, z);
+            let position = new THREE.Vector3(1, 2, 3);
+            position.x = x;
+            position.y = y;
+            position.z = z;
+
+            //console.log(position, x, y, z);
+
+
+            var worldPos = new THREE.Vector3();
+
+            var quaternion = new THREE.Quaternion();
+
+            //worldPos.setFromMatrixPosition(this.el.object3D.matrixWorld);
+            //worldPos = this.el.object3D.getWorldPosition(position);
+            //worldPos = 
+            //log(this.el.object3D.position.x + " " + this.el.object3D.position.y + " " + this.el.object3D.position.z);
+            //log(worldPos.x.toFixed(2) + " ; " + worldPos.y.toFixed(2) + " ; " + worldPos.z.toFixed(2) + " || Time: " + Date.now());
+            //log(Camera.instance.getAttribute("position").x);
+            //console.log(this.el.object3D.getWorldQuaternion(quaternion));
+        }
+    });
+    */
 
     animate();
     //requestAnimationFrame(animate());

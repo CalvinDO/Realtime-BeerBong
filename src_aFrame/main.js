@@ -6,6 +6,10 @@ import { Ball } from './Ball.js'
 import { Cup } from './Cup.js'
 import { ARButton } from './ARButton.js'
 import { Marker } from './Marker.js';
+import { EffectComposer } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/ShaderPass.js';
+import { TestShader, CustomShader, CustomShader2, CustomShader3} from "./customShader.js"
 
 //document.addEventListener("keydown", onKeyDown)
 
@@ -20,6 +24,10 @@ const loader = new GLTFLoader();
 
 let orbitControls = false;
 let ballThrow = true;
+
+let customShader;
+let customShader2;
+let customShader3;
 
 
 let customConsole;
@@ -556,3 +564,65 @@ function init() {
 
     /* */
 }
+
+
+AFRAME.registerSystem("postprocessing", {
+
+	composer: null,
+	originalRenderMethod: null,
+
+	/**
+	 * Initialises this system.
+	 */
+
+	init() {
+		console.log("hi");
+		const sceneEl = this.sceneEl;
+
+		const scene = sceneEl.object3D;
+		const renderer = sceneEl.renderer;
+		const render = renderer.render;
+		const camera = sceneEl.camera;
+
+		const clock = new THREE.Clock();
+		const composer = new EffectComposer(renderer);
+
+		this.composer = composer;
+		this.originalRenderMethod = render;
+
+		const renderPass = new RenderPass(scene, camera);
+    
+		composer.addPass(renderPass);
+        
+
+        customShader = new ShaderPass( TestShader ); 
+        customShader.renderToScreen = true;
+        composer.addPass( customShader );
+
+        this.composer = composer;
+        this.t = 0;
+        this.dt = 0;
+        this.bind();
+	},
+    tick: function (t, dt) {
+        this.t = t;
+        this.dt = dt;
+    },
+    bind: function () {
+        console.log("hi bind");
+      const renderer = this.sceneEl.renderer;
+      const render = renderer.render;
+      const system = this;
+      let isDigest = false;
+
+      renderer.render = function () {
+        if (isDigest) {
+          render.apply(this, arguments);
+        } else {
+          isDigest = true;
+          system.composer.render(system.dt);
+          isDigest = false;
+        }
+      };
+    }
+});

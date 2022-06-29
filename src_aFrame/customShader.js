@@ -1,6 +1,40 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
 //import { shaderVariablesSingleton } from './ShaderVariables.js';
 
+let TestShader = {
+    uniforms: {
+		tDiffuse: { value: null },
+        drunkStage: {type: 'float', value: 1.0 },
+        drunk: { type: 'bool', value: false },
+        u_resolution: { type: 'vec2', value: new THREE.Vector2(window.innerWidth, window.innerHeight)},
+        length_center_to_corner: { type: 'float', value: new THREE.Vector2(window.innerWidth, window.innerHeight).length() },
+        amount: { value: 0.0}
+	},
+    vertexShader: `
+	varying vec2 vUv;
+    uniform bool drunk;
+    uniform float drunkStage;
+    uniform float amount;
+	void main() {
+		vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+	}`,
+    fragmentShader:`
+    uniform sampler2D tDiffuse;
+        varying vec2 vUv;
+        uniform float drunkStage;
+        uniform bool drunk;
+        uniform vec2 u_resolution;
+        uniform float length_center_to_corner;
+    void main() {
+        if(drunk) {
+            gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
+        }
+        
+    }
+    `
+}
+
 let CustomShader = {
 	uniforms: {
 		tDiffuse: { value: null },
@@ -181,4 +215,4 @@ let CustomShader3 = {
         `
 }
 
-export { CustomShader, CustomShader2 , CustomShader3 };
+export { TestShader, CustomShader, CustomShader2 , CustomShader3 };

@@ -33,7 +33,7 @@
         }
         x();
     </script>
-    <a-scene embedded arjs id="a_Scene" antialias="true">
+    <a-scene embedded arjs id="a_Scene" renderer="antialias: true">
         <a-marker preset='custom' type='pattern' url='Assets/beerpong.patt' id="a_Marker">
             <!-- we use cors proxy to avoid cross-origin problems ATTENTION! you need to set up your server -->
             <a-entity position="0 0 0" scale="1.0 1.0 1.0" gltf-model="./Assets/Table.glb"></a-entity>

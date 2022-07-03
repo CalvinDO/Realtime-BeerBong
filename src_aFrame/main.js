@@ -294,7 +294,7 @@ function setupSceneCamRenderer() {
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
-    document.body.appendChild(ARButton.createButton(renderer));
+    //document.body.appendChild(ARButton.createButton(renderer));
     renderer.xr.enabled = true;
 }
 

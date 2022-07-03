@@ -462,7 +462,8 @@ function onTouchEnd(_event) {
     //worldPos.setFromMatrixPosition(Camera.instance.object3D.matrixWorld);
     //console.log(Marker.instance.object3D.getWorldPosition(new THREE.Vector3()));
 
-    ball.tossDirect(position);
+    
+    ball.tossFromCam(position, swipe);
 
     //ball.toss(swipe);
 

@@ -118,20 +118,33 @@ class Ball extends THREE.Mesh {
         //alert("BAll says: tossed!");
     }
 
-    tossDirect(_toss) {
+    tossFromCam(_camPos, _swipe) {
+
+        _swipe.multiplyScalar(Ball.tossFactor);
 
         let zeroPos = new THREE.Vector3();
-        //this.setBack();
-        let ballSetBackFactor = 0.5;
+        
+        let ballHoldingDistance = 0.4;
 
         //this.setBackTo((new THREE.Vector3(_toss.x, _toss.y, _toss.z)).multiplyScalar(ballSetBackFactor));
-        this.setBackTo(zeroPos.sub(_toss));
+        let camPos = zeroPos.clone().sub(_camPos);
+        camPos.sub(camPos.clone().normalize().multiplyScalar(ballHoldingDistance))
+        
+        this.setBackTo(camPos);
 
         //this.log(_toss.x.toFixed(2) + " ; " + _toss.y.toFixed(2) + " ; " + _toss.z.toFixed(2) + " || Time: " + Date.now());
-        //this.currentSpeed = zeroPos.sub(_toss);
+        
+        this.currentSpeed = _camPos.clone().normalize().multiplyScalar(-_swipe.y *2);
+        this.currentSpeed.add(new THREE.Vector3(0, -_swipe.y, 0));
+        let crossedToLeft = camPos.clone().cross(new THREE.Vector3(camPos.x, 0, camPos.z));
+        crossedToLeft.normalize();
+        crossedToLeft.multiplyScalar(_swipe.x/2);
+
+        this.currentSpeed.add(crossedToLeft);
+
         //this.currentSpeed.multiplyScalar(0.0001);
         //this.isKinematic = false;
-        this.isKinematic = true;
+        this.isKinematic = false;
     }
 
 
@@ -146,7 +159,7 @@ class Ball extends THREE.Mesh {
 
         //console.log(this.currentSpeed, this.deltaTime);
 
-
+        
 
         if (this.currentPosition.y <= 0.67) {
 

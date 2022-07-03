@@ -36,9 +36,9 @@
     <a-scene embedded arjs id="a_Scene" antialias="true">
         <a-marker position rotation preset='custom' type='pattern' url='Assets/beerpong.patt' id="a_Marker">
             <!-- we use cors proxy to avoid cross-origin problems ATTENTION! you need to set up your server -->
-            <a-entity position="0 -34 0" scale="5.88 5.88 5.88">
+            <a-entity position="0 0 0" scale="5.88 5.88 5.88">
 
-                <a-entity position="0 0 0" scale='1 1 1' gltf-model="./Assets/Table.glb"></a-entity>
+                <a-entity position="0 -3,43 0" scale='1 1 1' gltf-model="./Assets/Table.glb"></a-entity>
 
                 <a-sphere id="ball" scale='0.02 0.02 0.02' position="0 1.5 0"></a-sphere>
             </a-entity>

@@ -134,7 +134,7 @@ class Ball extends THREE.Mesh {
 
         //this.log(_toss.x.toFixed(2) + " ; " + _toss.y.toFixed(2) + " ; " + _toss.z.toFixed(2) + " || Time: " + Date.now());
         
-        this.currentSpeed = _camPos.clone().normalize().multiplyScalar(-_swipe.y *2);
+        this.currentSpeed = _camPos.clone().normalize().multiplyScalar(-_swipe.y *4);
         this.currentSpeed.add(new THREE.Vector3(0, -_swipe.y, 0));
         let crossedToLeft = camPos.clone().cross(new THREE.Vector3(camPos.x, 0, camPos.z));
         crossedToLeft.normalize();

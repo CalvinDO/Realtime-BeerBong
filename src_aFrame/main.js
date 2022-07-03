@@ -8,6 +8,7 @@ import { ARButton } from './ARButton.js'
 import { Marker } from './Marker.js';
 import { Camera } from './Camera.js';
 import { Scene } from './Scene.js';
+import { ScaleEntity } from './ScaleEntity.js';
 
 //document.addEventListener("keydown", onKeyDown)
 
@@ -221,7 +222,7 @@ function loadModel(model, position) {
             newCupaFrame.setAttribute("position", position.x + " " + position.y + " " + position.z);
             newCupaFrame.setAttribute("scale", "1.0 1.0 1.0");
             newCupaFrame.setAttribute("gltf-model", './Assets/' + model);
-            Marker.instance.appendChild(newCupaFrame);
+            ScaleEntity.instance.appendChild(newCupaFrame);
 
 
             let newCup = new Cup(root, newCupaFrame);
@@ -473,12 +474,15 @@ function onTouchEnd(_event) {
 function calculateCameraPosition(){
 
     let markerPosition = Marker.instance.getAttribute("position");
-
+    
     let x = markerPosition.x;
     let y = markerPosition.y;
     let z = markerPosition.z;
 
     let position = new THREE.Vector3(x, y, z);
+
+    position.multiplyScalar(1/2.94);
+
     let rotation = Marker.instance.object3D.getWorldQuaternion(new THREE.Quaternion());
     
     position.applyQuaternion(rotation.inverse()/*Marker.instance.getAttribute("rotation")*/);
@@ -616,6 +620,7 @@ function init() {
     //aMarker = document.getElementById("a_Marker");
     Marker.instance = document.getElementById("a_Marker");
     Scene.instance = document.getElementById("a_Scene");
+    ScaleEntity.instance = document.getElementById("a_ScaleEntity");
 
     //log(Date.now() + " !!!!");
     setupSceneCamRenderer();

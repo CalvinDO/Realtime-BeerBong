@@ -1,6 +1,7 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js'
 import { Ball } from './Ball.js'
 import { Marker } from './Marker.js';
+import { ScaleEntity } from './ScaleEntity.js';
 
 
 class Cup extends THREE.Group {
@@ -72,7 +73,7 @@ class Cup extends THREE.Group {
         Ball.instance.setBack();
 
         this.cupAFrame.setAttribute("display", "none");
-        Marker.instance.removeChild(this.cupAFrame);
+        ScaleEntity.instance.removeChild(this.cupAFrame);
 
         //alert(this.cupAFrame.getAttribute("display"));
     }

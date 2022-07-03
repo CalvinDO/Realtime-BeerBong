@@ -33,13 +33,15 @@
         }
         x();
     </script>
-    <a-scene embedded arjs id="a_Scene" scale='3 3 3' antialias="true">
-        <a-marker position rotation preset='custom' scale='3 3 3' type='pattern' url='Assets/beerpong.patt'
-            id="a_Marker">
+    <a-scene embedded arjs id="a_Scene" antialias="true">
+        <a-marker position rotation preset='custom' type='pattern' url='Assets/beerpong.patt' id="a_Marker">
             <!-- we use cors proxy to avoid cross-origin problems ATTENTION! you need to set up your server -->
-            <a-entity position="0 0 0" scale='1 1 1' gltf-model="./Assets/Table.glb"></a-entity>
+            <a-entity scale="5.88 5.88 5.88">
 
-            <a-sphere id="ball" scale='0.02 0.02 0.02' position="0 1.5 0"></a-sphere>
+                <a-entity position="0 0 0" scale='1 1 1' gltf-model="./Assets/Table.glb"></a-entity>
+
+                <a-sphere id="ball" scale='0.02 0.02 0.02' position="0 1.5 0"></a-sphere>
+            </a-entity>
 
         </a-marker>
         <a-entity position rotation camera id="camera"></a-entity>

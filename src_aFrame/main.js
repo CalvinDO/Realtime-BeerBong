@@ -694,63 +694,68 @@ function init() {
 }
 
 
-AFRAME.registerSystem("postprocessing", {
-
-	composer: null,
-	originalRenderMethod: null,
-
-	/**
-	 * Initialises this system.
-	 */
-
-	init() {
-		console.log("hi");
-		const sceneEl = this.sceneEl;
-
-		const scene = sceneEl.object3D;
-		const renderer = sceneEl.renderer;
-		const render = renderer.render;
-		const camera = sceneEl.camera;
-
-		const clock = new THREE.Clock();
-		const composer = new EffectComposer(renderer);
-
-		this.composer = composer;
-		this.originalRenderMethod = render;
-
-		const renderPass = new RenderPass(scene, camera);
-    
-		composer.addPass(renderPass);
-        
-
-        customShader = new ShaderPass( TestShader ); 
-        customShader.renderToScreen = true;
-        composer.addPass( customShader );
-
-        this.composer = composer;
-        this.t = 0;
-        this.dt = 0;
-        this.bind();
-	},
-    tick: function (t, dt) {
-        this.t = t;
-        this.dt = dt;
-    },
-    bind: function () {
-        console.log("hi bind");
-      const renderer = this.sceneEl.renderer;
-      const render = renderer.render;
-      const system = this;
-      let isDigest = false;
-
-      renderer.render = function () {
-        if (isDigest) {
-          render.apply(this, arguments);
-        } else {
-          isDigest = true;
-          system.composer.render(system.dt);
-          isDigest = false;
-        }
-      };
-    }
-});
+//jAFRAME.registerSystem("postprocessing", {
+//j
+//j	composer: null,
+//j	originalRenderMethod: null,
+//j
+//j	/**
+//j	 * Initialises this system.
+//j	 */
+//j
+//j	init() {
+//j		console.log("hi");
+//j		const sceneEl = this.sceneEl;
+//j
+//j        if (!sceneEl.hasLoaded) {
+//j            sceneEl.addEventListener('render-target-loaded', this.init.bind(this));
+//j            return;
+//j          }
+//j
+//j		const scene = sceneEl.object3D;
+//j		const renderer = sceneEl.renderer;
+//j		const render = renderer.render;
+//j		const camera = sceneEl.camera;
+//j
+//j		const clock = new THREE.Clock();
+//j		const composer = new EffectComposer(renderer);
+//j
+//j		this.composer = composer;
+//j		this.originalRenderMethod = render;
+//j
+//j		const renderPass = new RenderPass(scene, camera);
+//j    
+//j		composer.addPass(renderPass);
+//j        
+//j
+//j        customShader = new ShaderPass( TestShader ); 
+//j        customShader.renderToScreen = true;
+//j        composer.addPass( customShader );
+//j
+//j        this.composer = composer;
+//j        this.t = 0;
+//j        this.dt = 0;
+//j        this.bind();
+//j	},
+//j    tick: function (t, dt) {
+//j        this.t = t;
+//j        this.dt = dt;
+//j    },
+//j    bind: function () {
+//j        console.log("hi bind");
+//j        const renderer = this.sceneEl.renderer;
+//j        const render = renderer.render;
+//j        const system = this;
+//j        let isDigest = false;
+//j
+//j        renderer.render = function () {
+//j            if (isDigest) {
+//j                render.apply(this, arguments);
+//j            } else {
+//j                isDigest = true;
+//j                system.composer.render(system.dt);
+//j                isDigest = false;
+//j            }
+//j        };
+//j    }
+//j});

@@ -8,6 +8,7 @@ import { ARButton } from './ARButton.js'
 import { Marker } from './Marker.js';
 import { Camera } from './Camera.js';
 import { Scene } from './Scene.js';
+import { ScaleEntity } from './ScaleEntity.js';
 
 //document.addEventListener("keydown", onKeyDown)
 
@@ -225,7 +226,7 @@ function loadModel(model, position) {
             newCupaFrame.setAttribute("position", position.x + " " + position.y + " " + position.z);
             newCupaFrame.setAttribute("scale", "1.0 1.0 1.0");
             newCupaFrame.setAttribute("gltf-model", './Assets/' + model);
-            Marker.instance.appendChild(newCupaFrame);
+            ScaleEntity.instance.appendChild(newCupaFrame);
 
 
             let newCup = new Cup(root, newCupaFrame);
@@ -298,7 +299,7 @@ function setupSceneCamRenderer() {
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
-    document.body.appendChild(ARButton.createButton(renderer));
+    //document.body.appendChild(ARButton.createButton(renderer));
     renderer.xr.enabled = true;
 }
 
@@ -427,19 +428,19 @@ function onTouchEnd(_event) {
     mouseUpPos = new THREE.Vector2(_event.changedTouches[0].clientX, _event.changedTouches[0].clientY);
 
     let swipe = mouseUpPos.sub(mouseDownPos);
-    // console.log(swipe);
-    //console.log(ball.position);
-    // console.log(swipe);
-    //console.log(ball.position);
 
-    let markerPosition = Marker.instance.getAttribute("position");
+    ball.tossFromCam(swipe);
+    
+
+    // console.log(swipe);
+    //console.log(ball.position);
+    // console.log(swipe);
+    //console.log(ball.position);
     //console.log(markerPosition);
-    let x = markerPosition.x;
-    let y = markerPosition.y;
-    let z = markerPosition.z;
+    
     //console.log(x, y, z);
 
-    let position = new THREE.Vector3(x, y, z);
+    
     /*
     position.x = x;
     position.y = y;
@@ -452,13 +453,11 @@ function onTouchEnd(_event) {
 
     //let rotation = Marker.instance.getAttribute("rotation");
     //console.log("cam rotation: ", Camera.instance.object3D.getWorldQuaternion(new THREE.Quaternion()));
-    let rotation = Marker.instance.object3D.getWorldQuaternion(new THREE.Quaternion());
 
     //console.log(rotation.angleTo(new THREE.Quaternion()));
     //let invertedRotation = new THREE.Quaternion();
     //invertedRotation.copy(rotation);
     //invertedRotation.invert();
-    position.applyQuaternion(rotation.inverse()/*Marker.instance.getAttribute("rotation")*/);
 
     //console.log("after quat: ", position.x, position.y, position.z);
 
@@ -466,7 +465,7 @@ function onTouchEnd(_event) {
     //worldPos.setFromMatrixPosition(Camera.instance.object3D.matrixWorld);
     //console.log(Marker.instance.object3D.getWorldPosition(new THREE.Vector3()));
 
-    ball.tossDirect(position);
+   
 
     //ball.toss(swipe);
 
@@ -476,7 +475,27 @@ function onTouchEnd(_event) {
 }
 
 
+function calculateCameraPosition(){
 
+    let markerPosition = Marker.instance.getAttribute("position");
+    
+    let x = markerPosition.x;
+    let y = markerPosition.y;
+    let z = markerPosition.z;
+
+    let position = new THREE.Vector3(x, y, z);
+
+    position.multiplyScalar(1/2.94);
+
+    let rotation = Marker.instance.object3D.getWorldQuaternion(new THREE.Quaternion());
+    
+    position.applyQuaternion(rotation.inverse()/*Marker.instance.getAttribute("rotation")*/);
+    
+    let zeroPos = new THREE.Vector3();
+    let camPos = zeroPos.clone().sub(position);
+
+    Camera.instance.position = camPos;
+}
 
 
 function log(message) {
@@ -549,6 +568,8 @@ function animate() {
 
     calculateDeltaTime();
 
+    calculateCameraPosition();
+
     if (ball) {
         ball.rotateY(1 * deltaTime)
         ball.rotateZ(1 * deltaTime)
@@ -603,6 +624,7 @@ function init() {
     //aMarker = document.getElementById("a_Marker");
     Marker.instance = document.getElementById("a_Marker");
     Scene.instance = document.getElementById("a_Scene");
+    ScaleEntity.instance = document.getElementById("a_ScaleEntity");
 
     //log(Date.now() + " !!!!");
     setupSceneCamRenderer();

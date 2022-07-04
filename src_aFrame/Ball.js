@@ -1,4 +1,6 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js'
+import { Camera } from './Camera.js';
+
 
 class Ball extends THREE.Mesh {
 
@@ -23,6 +25,9 @@ class Ball extends THREE.Mesh {
 
     framesAlive = 0;
 
+    ballHoldingDistance = 0.4;
+
+
     constructor(_material, _gravity) {
 
         super(new THREE.SphereGeometry(Ball.radius, 32, 16), _material);
@@ -45,6 +50,7 @@ class Ball extends THREE.Mesh {
 
         if (this.isKinematic) {
             //this.currentPosition = this.position = 
+            this.setBackToCamPosPlusOffset();
             return;
         }
 
@@ -118,20 +124,31 @@ class Ball extends THREE.Mesh {
         //alert("BAll says: tossed!");
     }
 
-    tossDirect(_toss) {
+    tossFromCam(_swipe) {
+
+        _swipe.multiplyScalar(Ball.tossFactor);
 
         let zeroPos = new THREE.Vector3();
-        //this.setBack();
-        let ballSetBackFactor = 0.5;
 
         //this.setBackTo((new THREE.Vector3(_toss.x, _toss.y, _toss.z)).multiplyScalar(ballSetBackFactor));
-        this.setBackTo(zeroPos.sub(_toss));
+        let camPos = Camera.instance.position.clone();
+        camPos.sub(camPos.clone().normalize().multiplyScalar(this.ballHoldingDistance))
+
+        this.setBackTo(camPos);
 
         //this.log(_toss.x.toFixed(2) + " ; " + _toss.y.toFixed(2) + " ; " + _toss.z.toFixed(2) + " || Time: " + Date.now());
-        //this.currentSpeed = zeroPos.sub(_toss);
+
+        this.currentSpeed = zeroPos.clone().sub(Camera.instance.position).clone().normalize().multiplyScalar(-_swipe.y * 3);
+        this.currentSpeed.add(new THREE.Vector3(0, -_swipe.y, 0));
+        let crossedToLeft = camPos.clone().cross(new THREE.Vector3(camPos.x, 0, camPos.z));
+        crossedToLeft.normalize();
+        crossedToLeft.multiplyScalar(_swipe.x / 2);
+
+        this.currentSpeed.add(crossedToLeft);
+
         //this.currentSpeed.multiplyScalar(0.0001);
         //this.isKinematic = false;
-        this.isKinematic = true;
+        this.isKinematic = false;
     }
 
 
@@ -150,14 +167,13 @@ class Ball extends THREE.Mesh {
 
         if (this.currentPosition.y <= 0.67) {
 
-
-            this.currentSpeed.y *= -0.8;
+            this.currentSpeed.y *= -0.65;
             this.currentPosition.y += Math.abs(this.currentSpeed.y * this.deltaTime);
 
             this.bounces += 1;
 
             if (this.bounces > Ball.bouncesTillReset) {
-                this.setBack();
+                this.setBackToCamPosPlusOffset();
             }
             return;
         }
@@ -171,6 +187,13 @@ class Ball extends THREE.Mesh {
 
 
         //console.log("gravity: ", this.gravity);
+    }
+
+    setBackToCamPosPlusOffset() {
+        let camPos = Camera.instance.position.clone();
+        camPos.sub(camPos.clone().normalize().multiplyScalar(this.ballHoldingDistance))
+
+        this.setBackTo(camPos);
     }
 
     updateHTML() {

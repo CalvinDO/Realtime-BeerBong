@@ -36,7 +36,8 @@
     <a-scene embedded arjs id="a_Scene" antialias="true">
         <a-marker position rotation preset='custom' type='pattern' url='Assets/beerpong.patt' id="a_Marker">
             <!-- we use cors proxy to avoid cross-origin problems ATTENTION! you need to set up your server -->
-            <a-entity position="0 -0.585 0" scale="2.94 2.94 2.94">
+            <!--scale= "5.88 5.88 5.88" -->
+            <a-entity id = "a_ScaleEntity" position="0 0 0" scale="2.94 2.94 2.94">
 
                 <a-entity position="0 0 0" scale='1 1 1' gltf-model="./Assets/Table.glb"></a-entity>
 
@@ -44,7 +45,7 @@
             </a-entity>
 
         </a-marker>
-        <a-entity position rotation camera id="camera"></a-entity>
+            <a-entity position rotation camera id="camera"></a-entity>
     </a-scene>
 
 </body>

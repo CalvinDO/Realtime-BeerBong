@@ -9,13 +9,15 @@ class Cup extends THREE.Group {
     openingRadius = 0.092 / 2;
     height = 0.117;
     cupAFrame;
+    cupID;
 
-    constructor(_group, _cupAFrame) {
+    constructor(_group, _cupAFrame, _cupID) {
 
         super();
 
         this.add(_group);
         this.cupAFrame = _cupAFrame;
+        this.cupID = _cupID
 
     }
 
@@ -76,6 +78,11 @@ class Cup extends THREE.Group {
         ScaleEntity.instance.removeChild(this.cupAFrame);
 
         //alert(this.cupAFrame.getAttribute("display"));
+        if (this.cupID != 'red11' || this.cupID != 'blue11') {
+           document.querySelector('#'+this.cupID).classList.add('empty') 
+        }
+        
+        //alert(this.cupID)
     }
 
 }

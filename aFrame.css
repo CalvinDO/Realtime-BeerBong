@@ -1,0 +1,49 @@
+.cupUI {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 90%;
+    padding: 5% 5%;
+    display: flex;
+    justify-content: space-between;
+    z-index: 10;
+}
+
+.cups {
+    border: 2px solid whitesmoke;
+    background-color: rgb(40, 40, 40);
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.cup {
+    width: 14px;
+    height: 14px;
+    border: 1px solid whitesmoke;
+    border-radius: 25px;
+    display: block;
+    content: '';
+}
+
+.row {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: -1px;
+    margin-top: -1px;
+}
+
+.red .cup {
+    background-color: red;
+}
+
+.blue .cup {
+    background-color: blue;
+}
+
+.cup.empty {
+    background-color: rgb(40, 40, 40);
+}

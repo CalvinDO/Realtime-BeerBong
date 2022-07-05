@@ -26,6 +26,10 @@ const loader = new GLTFLoader();
 let orbitControls = false;
 let ballThrow = true;
 
+let customShader;
+let customShader2;
+let customShader3;
+
 
 let customConsole;
 
@@ -197,7 +201,7 @@ function addCups() {
         } else {
             src = 'BlueCup.glb'
         }
-        loadModel(src, pCup)
+        loadModel(src, pCup, i)
         i++
     }
     // loadModel('Cup.glb', pCups[0])
@@ -208,7 +212,7 @@ function installOrbitControls() {
     controls.update()
 }
 
-function loadModel(model, position) {
+function loadModel(model, position, i) {
     loader.load('Assets/' + model, function (glb) {
 
         const root = glb.scene
@@ -224,8 +228,14 @@ function loadModel(model, position) {
             newCupaFrame.setAttribute("gltf-model", './Assets/' + model);
             ScaleEntity.instance.appendChild(newCupaFrame);
 
+            let cupID;
+            if (i <= 10) {
+                cupID = 'red' + i
+            } else {
+                cupID = 'blue' + (i-10)
+            }
 
-            let newCup = new Cup(root, newCupaFrame);
+            let newCup = new Cup(root, newCupaFrame, cupID);
             newCup.position.set(position.x, position.y, position.z)
 
             /*
@@ -688,3 +698,70 @@ function init() {
 
     /* */
 }
+
+
+//jAFRAME.registerSystem("postprocessing", {
+//j
+//j	composer: null,
+//j	originalRenderMethod: null,
+//j
+//j	/**
+//j	 * Initialises this system.
+//j	 */
+//j
+//j	init() {
+//j		console.log("hi");
+//j		const sceneEl = this.sceneEl;
+//j
+//j        if (!sceneEl.hasLoaded) {
+//j            sceneEl.addEventListener('render-target-loaded', this.init.bind(this));
+//j            return;
+//j          }
+//j
+//j		const scene = sceneEl.object3D;
+//j		const renderer = sceneEl.renderer;
+//j		const render = renderer.render;
+//j		const camera = sceneEl.camera;
+//j
+//j		const clock = new THREE.Clock();
+//j		const composer = new EffectComposer(renderer);
+//j
+//j		this.composer = composer;
+//j		this.originalRenderMethod = render;
+//j
+//j		const renderPass = new RenderPass(scene, camera);
+//j    
+//j		composer.addPass(renderPass);
+//j        
+//j
+//j        customShader = new ShaderPass( TestShader ); 
+//j        customShader.renderToScreen = true;
+//j        composer.addPass( customShader );
+//j
+//j        this.composer = composer;
+//j        this.t = 0;
+//j        this.dt = 0;
+//j        this.bind();
+//j	},
+//j    tick: function (t, dt) {
+//j        this.t = t;
+//j        this.dt = dt;
+//j    },
+//j    bind: function () {
+//j        console.log("hi bind");
+//j        const renderer = this.sceneEl.renderer;
+//j        const render = renderer.render;
+//j        const system = this;
+//j        let isDigest = false;
+//j
+//j        renderer.render = function () {
+//j            if (isDigest) {
+//j                render.apply(this, arguments);
+//j            } else {
+//j                isDigest = true;
+//j                system.composer.render(system.dt);
+//j                isDigest = false;
+//j            }
+//j        };
+//j    }
+//j});

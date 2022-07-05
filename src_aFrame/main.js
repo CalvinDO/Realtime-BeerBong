@@ -55,55 +55,65 @@ let pCups = [
     {
         x: 0,
         y: 0.67,
-        z: 0.85
+        z: 0.85,
+        id: "red1"
     },
     // 2. row
     {
         x: 0.045,
         y: 0.67,
-        z: 0.93
+        z: 0.93,
+        id: "red3"
     },
     {
         x: -0.045,
         y: 0.67,
-        z: 0.93
+        z: 0.93,
+        id: "red2"
     },
     // 3. row
     {
         x: -0.09,
         y: 0.67,
-        z: 1.01
+        z: 1.01,
+        id: "red4"
     },
     {
         x: 0,
         y: 0.67,
-        z: 1.01
+        z: 1.01,
+        id: "red5"
     },
     {
         x: 0.09,
         y: 0.67,
-        z: 1.01
+        z: 1.01,
+        id: "red6"
     },
     // 4. row
     {
         x: 0.135,
         y: 0.67,
-        z: 1.09
+        z: 1.09,
+        id: "red10"
     },
     {
         x: 0.045,
         y: 0.67,
-        z: 1.09
+        z: 1.09,
+        id: "red9"
     },
     {
         x: -0.135,
         y: 0.67,
-        z: 1.09
+        z: 1.09,
+        id: "red8"
     },
     {
         x: -0.045,
         y: 0.67,
-        z: 1.09
+        z: 1.09,
+        id: "red7"
     },
     // water cup
     {
@@ -117,55 +127,65 @@ let pCups = [
     {
         x: 0,
         y: 0.67,
-        z: -0.85
+        z: -0.85,
+        id: "blue8"
     },
     // 2. row
     {
         x: 0.045,
         y: 0.67,
-        z: -0.93
+        z: -0.93,
+        id: "blue2"
     },
     {
         x: -0.045,
         y: 0.67,
-        z: -0.93
+        z: -0.93,
+        id: "blue3"
     },
     // 3. row
     {
         x: -0.09,
         y: 0.67,
-        z: -1.01
+        z: -1.01,
+        id: "blue6"
     },
     {
         x: 0,
         y: 0.67,
-        z: -1.01
+        z: -1.01,
+        id: "blue5"
     },
     {
         x: 0.09,
         y: 0.67,
-        z: -1.01
+        z: -1.01,
+        id: "blue4"
     },
     // 4. row
     {
         x: 0.135,
         y: 0.67,
-        z: -1.09
+        z: -1.09,
+        id: "blue7"
     },
     {
         x: 0.045,
         y: 0.67,
-        z: -1.09
+        z: -1.09,
+        id: "blue8"
     },
     {
         x: -0.135,
         y: 0.67,
-        z: -1.09
+        z: -1.09,
+        id: "blue9"
     },
     {
         x: -0.045,
         y: 0.67,
-        z: -1.09
+        z: -1.09,
+        id: "blue10"
     },
     // water cup
     {
@@ -201,7 +221,7 @@ function addCups() {
         } else {
             src = 'BlueCup.glb'
         }
-        loadModel(src, pCup, i)
+        loadModel(src, pCup)
         i++
     }
     // loadModel('Cup.glb', pCups[0])
@@ -212,7 +232,7 @@ function installOrbitControls() {
     controls.update()
 }
 
-function loadModel(model, position, i) {
+function loadModel(model, position) {
     loader.load('Assets/' + model, function (glb) {
 
         const root = glb.scene
@@ -228,14 +248,7 @@ function loadModel(model, position, i) {
             newCupaFrame.setAttribute("gltf-model", './Assets/' + model);
             ScaleEntity.instance.appendChild(newCupaFrame);
 
-            let cupID;
-            if (i <= 10) {
-                cupID = 'red' + i
-            } else {
-                cupID = 'blue' + (i-10)
-            }
-
-            let newCup = new Cup(root, newCupaFrame, cupID);
+            let newCup = new Cup(root, newCupaFrame, position.id);
             newCup.position.set(position.x, position.y, position.z)
 
             /*
@@ -615,6 +628,19 @@ function animate() {
 init();
 
 
+function rotate(e) {
+    let el = document.querySelector('.cups.' + this)
+    let currentRotation = el.getAttribute('rotation')
+
+    if (currentRotation == '0') {
+        el.style.transform = 'rotate(180deg)'
+        el.setAttribute('rotation', '180')
+    } else {
+        el.style.transform = 'rotate(0deg)'
+        el.setAttribute('rotation', '0')
+    }
+}
+
 
 function init() {
     //alert("main init working!!");
@@ -647,6 +673,10 @@ function init() {
     loadModel('Table.glb', pTable)
 
     //addDrunkEffect();
+
+    //document.querySelectorAll('.cups').addEventListener('click', rotate)
+    document.querySelector('.cups.blue').addEventListener('click', rotate.bind('blue'))
+    document.querySelector('.cups.red').addEventListener('click', rotate.bind('red'))
 
     if (orbitControls) {
         installOrbitControls();

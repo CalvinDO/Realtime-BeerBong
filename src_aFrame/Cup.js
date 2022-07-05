@@ -9,6 +9,7 @@ class Cup extends THREE.Group {
     openingRadius = 0.092 / 2;
     height = 0.117;
     cupAFrame;
+    
     cupID;
 
     constructor(_group, _cupAFrame, _cupID) {

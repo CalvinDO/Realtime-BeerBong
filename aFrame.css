@@ -19,6 +19,10 @@
     justify-content: center;
 }
 
+.blue {
+    transform: rotate(180deg);
+}
+
 .cup {
     width: 14px;
     height: 14px;

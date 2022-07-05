@@ -233,7 +233,7 @@ class Ball extends THREE.Mesh {
 
             if (z > -0.614 && z < 0.614) {
 
-                if (/*y > 0.3 && */y < 0.62) {
+                if (/*y > 0.3 && */y < 0.67) {
                     return true;
                 }
             }

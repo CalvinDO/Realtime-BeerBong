@@ -179,13 +179,13 @@ let pCups = [
         x: -0.135,
         y: 0.67,
         z: -1.09,
-        id: "blue9"
+        id: "blue10"
     },
     {
         x: -0.045,
         y: 0.67,
         z: -1.09,
-        id: "blue10"
+        id: "blue9"
     },
     // water cup
     {

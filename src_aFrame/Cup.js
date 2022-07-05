@@ -9,7 +9,7 @@ class Cup extends THREE.Group {
     openingRadius = 0.092 / 2;
     height = 0.117;
     cupAFrame;
-    
+
     cupID;
 
     constructor(_group, _cupAFrame, _cupID) {
@@ -80,7 +80,7 @@ class Cup extends THREE.Group {
 
         //alert(this.cupAFrame.getAttribute("display"));
         if (this.cupID != 'red11' || this.cupID != 'blue11') {
-            alert(this.cupID)
+            //alert(this.cupID)
            document.querySelector('#'+this.cupID).classList.add('empty')
         }
         

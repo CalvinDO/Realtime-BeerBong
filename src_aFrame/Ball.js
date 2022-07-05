@@ -21,7 +21,7 @@ class Ball extends THREE.Mesh {
 
     static bouncesTillReset = 7;
 
-    static tossFactor = 0.0075;
+    static tossFactor = 1 / window.innerHeight * 5.77;
     bounces = 0;
 
     framesAlive = 0;
@@ -163,7 +163,7 @@ class Ball extends THREE.Mesh {
         let x = a / 5;
         //this.log(x.toFixed(2) +  "    "  + (1.8 + Math.log(x/(1-x))).toFixed(4) );
 
-        let output = 2 + Math.log(x / (1 - x));
+        let output = 2.5 + Math.log(x / (1 - x));
         if (output < 0) {
             output = 0;
         }
@@ -187,7 +187,7 @@ class Ball extends THREE.Mesh {
         if (this.hitsSomething()) {
 
             this.soundElement.play();
-            this.currentSpeed.y *= -0.65;
+            this.currentSpeed.y *= -0.8;
 
             this.currentPosition.y += Math.abs(this.currentSpeed.y * this.deltaTime);
 
@@ -231,9 +231,9 @@ class Ball extends THREE.Mesh {
 
         if (x > -0.305 && x < 0.305) {
 
-            if (z > -0.614 && z < 0.614) {
+            if (z > -1.22 && z < 1.22) {
 
-                if (/*y > 0.3 && */y < 0.67) {
+                if (/*y > 0.3 && */y < 0.65) {
                     return true;
                 }
             }

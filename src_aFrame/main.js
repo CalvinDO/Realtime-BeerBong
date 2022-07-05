@@ -37,6 +37,9 @@ let aMarker;
 
 let camToMarker;
 
+let scale = 1;
+
+
 if (ballThrow) {
     window.addEventListener("mousedown", onMouseDown);
     //window.addEventListener("mouseup", onMouseUp);
@@ -128,7 +131,7 @@ let pCups = [
         x: 0,
         y: 0.67,
         z: -0.85,
-        id: "blue1"
+        id: "blue8"
     },
     // 2. row
     {
@@ -179,13 +182,13 @@ let pCups = [
         x: -0.135,
         y: 0.67,
         z: -1.09,
-        id: "blue10"
+        id: "blue9"
     },
     {
         x: -0.045,
         y: 0.67,
         z: -1.09,
-        id: "blue9"
+        id: "blue10"
     },
     // water cup
     {
@@ -504,7 +507,7 @@ function calculateCameraPosition(){
 
     let position = new THREE.Vector3(x, y, z);
 
-    position.multiplyScalar(1/2.94);
+    position.multiplyScalar(1/scale);
 
     let rotation = Marker.instance.object3D.getWorldQuaternion(new THREE.Quaternion());
     
@@ -606,7 +609,7 @@ function animate() {
         controls.update()
     }
 
-
+    ScaleEntity.instance.setAttribute("scale", "" + scale + " " + scale + " " + scale);
 
     //worldPos = Camera.instance.object3D.getWorldPosition(position);
     //log(worldPos.x.toFixed(2) + " ; " + worldPos.y.toFixed(2) + " ; " + worldPos.z.toFixed(2) + " || Time: " + Date.now());

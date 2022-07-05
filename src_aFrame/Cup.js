@@ -79,10 +79,11 @@ class Cup extends THREE.Group {
 
         //alert(this.cupAFrame.getAttribute("display"));
         if (this.cupID != 'red11' || this.cupID != 'blue11') {
-           document.querySelector('#'+this.cupID).classList.add('empty') 
+            alert(this.cupID)
+           document.querySelector('#'+this.cupID).classList.add('empty')
         }
         
-        //alert(this.cupID)
+        
     }
 
 }

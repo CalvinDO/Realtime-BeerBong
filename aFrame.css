@@ -53,7 +53,7 @@
 }
 
 .settings {
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
     background-color: rgb(40, 40, 40);
@@ -122,8 +122,8 @@
     right: 0;
     bottom: 0;
     background-color: #ff4242;
-    -webkit-transition: .4s;
-    transition: .4s;
+    -webkit-transition: .2s;
+    transition: .2s;
 }
 
 .slider:before {
@@ -134,8 +134,8 @@
     left: 2px;
     bottom: 2px;
     background-color: white;
-    -webkit-transition: .4s;
-    transition: .4s;
+    -webkit-transition: .2s;
+    transition: .2s;
 }
 
 input:checked + .slider {

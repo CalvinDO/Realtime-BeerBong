@@ -189,12 +189,15 @@ class Ball extends THREE.Mesh {
             this.soundElement.play();
             this.currentSpeed.y *= -0.65;
 
+            this.currentPosition.y += Math.abs(this.currentSpeed.y * this.deltaTime);
+
+            /*
             if (this.currentSpeed.y < 0){
                 this.currentPosition.y += Math.abs(this.currentSpeed.y * this.deltaTime);
             } else{
                 this.currentPosition.y -= Math.abs(this.currentSpeed.y * this.deltaTime);
             }
-
+            */
 
             this.bounces += 1;
 
@@ -230,7 +233,7 @@ class Ball extends THREE.Mesh {
 
             if (z > -0.614 && z < 0.614) {
 
-                if (y> 0.5 && y < 0.62) {
+                if (/*y > 0.3 && */y < 0.62) {
                     return true;
                 }
             }

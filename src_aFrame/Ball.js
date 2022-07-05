@@ -13,6 +13,7 @@ class Ball extends THREE.Mesh {
 
     element;
 
+    soundElement;
 
     static radius = 0.02;
 
@@ -37,6 +38,8 @@ class Ball extends THREE.Mesh {
         Ball.instance = this;
 
         this.element = document.querySelector("a-sphere");
+        this.soundElement = document.querySelector("a-sphere a-sound");
+
         //this.log("'" + Ball.radius + " " + Ball.radius +" " + Ball.radius + "'")
         this.element.setAttribute("scale", Ball.radius + " " + Ball.radius + " " + Ball.radius);
         //this.log(this.element.getAttribute("scale").toString());
@@ -141,7 +144,7 @@ class Ball extends THREE.Mesh {
         this.currentSpeed = zeroPos.clone().sub(Camera.instance.position).clone().normalize().multiplyScalar(this.getLogit(-_swipe.y) * 3);
         this.currentSpeed.add(new THREE.Vector3(0, this.getLogit(-_swipe.y) * 3, 0));
 
-        
+
         //this.log(this.getLogit(-_swipe.y)); 
 
         let crossedToLeft = camPos.clone().cross(new THREE.Vector3(camPos.x, 0, camPos.z));
@@ -164,7 +167,7 @@ class Ball extends THREE.Mesh {
         if (output < 0) {
             output = 0;
         }
-       this. log(output);
+        this.log(output);
         return output;
     }
 
@@ -181,10 +184,17 @@ class Ball extends THREE.Mesh {
 
 
 
-        if (this.currentPosition.y <= 0.67) {
+        if (this.hitsSomething()) {
 
+            this.soundElement.play();
             this.currentSpeed.y *= -0.65;
-            this.currentPosition.y += Math.abs(this.currentSpeed.y * this.deltaTime);
+
+            if (this.currentSpeed.y < 0){
+                this.currentPosition.y += Math.abs(this.currentSpeed.y * this.deltaTime);
+            } else{
+                this.currentPosition.y -= Math.abs(this.currentSpeed.y * this.deltaTime);
+            }
+
 
             this.bounces += 1;
 
@@ -203,6 +213,30 @@ class Ball extends THREE.Mesh {
 
 
         //console.log("gravity: ", this.gravity);
+    }
+
+    hitsSomething() {
+
+        let x = this.currentPosition.x;
+        let y = this.currentPosition.y;
+        let z = this.currentPosition.z;
+
+
+        if (y < 0) {
+            return true;
+        }
+
+        if (x > -0.305 && x < 0.305) {
+
+            if (z > -0.614 && z < 0.614) {
+
+                if (y> 0.5 && y < 0.62) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     setBackToCamPosPlusOffset() {

@@ -201,7 +201,7 @@ function addCups() {
         } else {
             src = 'BlueCup.glb'
         }
-        loadModel(src, pCup)
+        loadModel(src, pCup, i)
         i++
     }
     // loadModel('Cup.glb', pCups[0])
@@ -212,7 +212,7 @@ function installOrbitControls() {
     controls.update()
 }
 
-function loadModel(model, position) {
+function loadModel(model, position, i) {
     loader.load('Assets/' + model, function (glb) {
 
         const root = glb.scene
@@ -228,8 +228,14 @@ function loadModel(model, position) {
             newCupaFrame.setAttribute("gltf-model", './Assets/' + model);
             ScaleEntity.instance.appendChild(newCupaFrame);
 
+            let cupID;
+            if (i <= 10) {
+                cupID = 'red' + i
+            } else {
+                cupID = 'blue' + (i-10)
+            }
 
-            let newCup = new Cup(root, newCupaFrame);
+            let newCup = new Cup(root, newCupaFrame, cupID);
             newCup.position.set(position.x, position.y, position.z)
 
             /*

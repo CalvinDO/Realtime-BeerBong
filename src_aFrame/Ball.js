@@ -138,8 +138,12 @@ class Ball extends THREE.Mesh {
 
         //this.log(_toss.x.toFixed(2) + " ; " + _toss.y.toFixed(2) + " ; " + _toss.z.toFixed(2) + " || Time: " + Date.now());
 
-        this.currentSpeed = zeroPos.clone().sub(Camera.instance.position).clone().normalize().multiplyScalar(-_swipe.y * 3);
-        this.currentSpeed.add(new THREE.Vector3(0, -_swipe.y, 0));
+        this.currentSpeed = zeroPos.clone().sub(Camera.instance.position).clone().normalize().multiplyScalar(this.getLogit(-_swipe.y) * 3);
+        this.currentSpeed.add(new THREE.Vector3(0, this.getLogit(-_swipe.y) * 3, 0));
+
+        
+        //this.log(this.getLogit(-_swipe.y)); 
+
         let crossedToLeft = camPos.clone().cross(new THREE.Vector3(camPos.x, 0, camPos.z));
         crossedToLeft.normalize();
         crossedToLeft.multiplyScalar(_swipe.x / 2);
@@ -151,6 +155,18 @@ class Ball extends THREE.Mesh {
         this.isKinematic = false;
     }
 
+    getLogit(a) {
+        //assuming 5 is max swipe after factor
+        let x = a / 5;
+        //this.log(x.toFixed(2) +  "    "  + (1.8 + Math.log(x/(1-x))).toFixed(4) );
+
+        let output = 2 + Math.log(x / (1 - x));
+        if (output < 0) {
+            output = 0;
+        }
+       this. log(output);
+        return output;
+    }
 
     log(message) {
         let display = document.querySelector("#display");

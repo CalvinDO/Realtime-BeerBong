@@ -37,7 +37,7 @@ let aMarker;
 
 let camToMarker;
 
-let scale = 1;
+let scale = 2.94;
 
 
 if (ballThrow) {

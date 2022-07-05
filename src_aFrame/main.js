@@ -131,7 +131,7 @@ let pCups = [
         x: 0,
         y: 0.67,
         z: -0.85,
-        id: "blue8"
+        id: "blue1"
     },
     // 2. row
     {

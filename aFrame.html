@@ -38,12 +38,10 @@
     <a-scene embedded arjs id="a_Scene" antialias="true">
         <a-marker position rotation preset='custom' type='pattern' url='Assets/beerpong.patt' id="a_Marker">
             <!-- we use cors proxy to avoid cross-origin problems ATTENTION! you need to set up your server -->
-            <!--scale= "5.88 5.88 5.88" -->
-
-            <a-entity id = "a_ScaleEntity" position="0 0 0" scale="2.94 2.94 2.94">
+            <a-entity id="a_ScaleEntity" position="0 0 0" scale="2.94 2.94 2.94">
 
                 <a-entity position="0 0 0" scale='1 1 1' gltf-model="./Assets/Table.glb"></a-entity>
-                
+
 
                 <a-sphere id="ball" scale='0.02 0.02 0.02' position="0 1.5 0">
                     <a-sound src="url(./src_aFrame/audio/bounce.mp3)" autoplay="false"></a-sound>
@@ -51,7 +49,7 @@
             </a-entity>
 
         </a-marker>
-            <a-entity position rotation camera id="camera"></a-entity>
+        <a-entity position rotation camera id="camera"></a-entity>
     </a-scene>
     <div class="cupUI">
         <div class="cups red" rotaion="0">
@@ -81,7 +79,7 @@
             </div>
             <div class="mode">
                 <label class="switch">
-                    <input id = "sizeToggle" type="checkbox" checked>
+                    <input id="sizeToggle" type="checkbox" checked>
                     <span class="slider round"></span>
                 </label>
                 <div class="label">

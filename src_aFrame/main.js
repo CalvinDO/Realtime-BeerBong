@@ -37,7 +37,7 @@ let aMarker;
 
 let camToMarker;
 
-let scale = 1;
+let scale = 2.94;
 
 
 if (ballThrow) {
@@ -327,22 +327,22 @@ function onTouchEnd(_event) {
 }
 
 
-function calculateCameraPosition(){
+function calculateCameraPosition() {
 
     let markerPosition = Marker.instance.getAttribute("position");
-    
+
     let x = markerPosition.x;
     let y = markerPosition.y;
     let z = markerPosition.z;
 
     let position = new THREE.Vector3(x, y, z);
 
-    position.multiplyScalar(1/scale);
+    position.multiplyScalar(1 / scale);
 
     let rotation = Marker.instance.object3D.getWorldQuaternion(new THREE.Quaternion());
-    
+
     position.applyQuaternion(rotation.inverse());
-    
+
     let zeroPos = new THREE.Vector3();
     let camPos = zeroPos.clone().sub(position);
 
@@ -414,6 +414,8 @@ function init() {
     Scene.instance = document.getElementById("a_Scene");
     ScaleEntity.instance = document.getElementById("a_ScaleEntity");
 
+
+
     addBall();
 
     addCups();
@@ -423,6 +425,10 @@ function init() {
     document.querySelector('.cups.blue').addEventListener('click', rotate.bind('blue'))
     document.querySelector('.cups.red').addEventListener('click', rotate.bind('red'))
 
+    let sizeToggle = document.querySelector("#sizeToggle");
+    sizeToggle.addEventListener("change", onSizeToggleChanged);
+
+
     if (orbitControls) {
         installOrbitControls();
     }
@@ -430,6 +436,10 @@ function init() {
     animate();
 }
 
+function onSizeToggleChanged(change) {
+
+    scale = this.checked ? 2.94 : 1;
+}
 
 //jAFRAME.registerSystem("postprocessing", {
 //j

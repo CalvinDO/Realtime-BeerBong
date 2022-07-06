@@ -40,7 +40,6 @@ class Cup {
         let ballXZ = new THREE.Vector2(Ball.instance.position.x, Ball.instance.position.z);
         let thisXZ = new THREE.Vector2(this.position.x, this.position.z);
 
-        this.log(ballXZ.x.toFixed(2) + "   " + thisXZ.x.toFixed(2));
         let XZMiddleDistance = ballXZ.sub(thisXZ);
 
         if (XZMiddleDistance.length() < this.openingRadius /*- (Ball.radius / 2)*/) {

@@ -4,15 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!--<meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <title>Beerphong</title>
 
     <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
-    <!--script src="https://aframe.io/releases/0.8.2/aframe.min.js"></script-->
-    <!-- we import arjs version without NFT but with marker + location based support -->
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-    <!-- script src="./src_aFrame/test.js" defer></script -->
     <script src="./src_aFrame/main.js" type="module"></script>
     <link rel="stylesheet" href="aFrame.css">
 
@@ -37,21 +33,18 @@
     </script>
     <a-scene embedded arjs id="a_Scene" antialias="true">
         <a-marker position rotation preset='custom' type='pattern' url='Assets/beerpong.patt' id="a_Marker">
-            <!-- we use cors proxy to avoid cross-origin problems ATTENTION! you need to set up your server -->
-            <!--scale= "5.88 5.88 5.88" -->
 
-            <a-entity id = "a_ScaleEntity" position="0 0 0" scale="2.94 2.94 2.94">
+            <a-entity id="a_ScaleEntity" position="0 0 0" scale="4.5 4.5 4.5">
 
                 <a-entity position="0 0 0" scale='1 1 1' gltf-model="./Assets/Table.glb"></a-entity>
-                
+
 
                 <a-sphere id="ball" scale='0.02 0.02 0.02' position="0 1.5 0">
-                    <a-sound src="url(./src_aFrame/audio/bounce.mp3)" autoplay="false"></a-sound>
                 </a-sphere>
             </a-entity>
 
         </a-marker>
-            <a-entity position rotation camera id="camera"></a-entity>
+        <a-entity position rotation camera id="camera"></a-entity>
     </a-scene>
     <div class="cupUI">
         <div class="cups red" rotaion="0">
@@ -81,7 +74,7 @@
             </div>
             <div class="mode">
                 <label class="switch">
-                    <input id = "sizeToggle" type="checkbox" checked>
+                    <input id="sizeToggle" type="checkbox" checked>
                     <span class="slider round"></span>
                 </label>
                 <div class="label">

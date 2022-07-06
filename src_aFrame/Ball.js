@@ -13,6 +13,8 @@ class Ball {
 
     element;
 
+    soundElement;
+
     static radius = 0.02;
 
     static instance;
@@ -28,15 +30,19 @@ class Ball {
 
 
     constructor(_gravity) {
-
+        
         Ball.instance = this;
 
         this.gravity = _gravity;
 
         this.element = document.querySelector("a-sphere");
 
-        this.element.setAttribute("scale", Ball.radius + " " + Ball.radius + " " + Ball.radius);
+        this.soundElement = document.querySelector("a-sphere a-sound");
 
+        //this.log(this.soundElement.getAttribute("src"));
+
+        this.element.setAttribute("scale", Ball.radius + " " + Ball.radius + " " + Ball.radius);
+        
     }
 
     updatePhysics(_deltaTime) {
@@ -64,6 +70,22 @@ class Ball {
         this.updateHTML();
     }
 
+    setBack() {
+
+        this.position.set(0, 1.2, 1.3)
+        this.speed.set(0, 0, 0);
+
+        this.updatePosition();
+
+        //this.gravity.set(0, -9.81, 0);
+        //this.deltaTime = 0.02;
+
+
+        this.bounces = 0;
+
+        this.isKinematic = true;
+    }
+
     setBackTo(_position) {
 
         this.position.set(_position.x, _position.y, _position.z)
@@ -76,13 +98,25 @@ class Ball {
         this.isKinematic = true;
     }
 
+    toss(_swipe) {
+
+        this.setBack();
+
+        _swipe.multiplyScalar(Ball.tossFactor);
+
+        let swipe3D = new THREE.Vector3(_swipe.x, -_swipe.y * 2, _swipe.y);
+        this.speed = swipe3D;
+
+        this.isKinematic = false;
+    }
+
     tossFromCam(_swipe) {
 
         _swipe.multiplyScalar(Ball.tossFactor);
 
         let zeroPos = new THREE.Vector3();
 
-
+        
         let camPos = Camera.instance.position.clone();
         camPos.sub(camPos.clone().normalize().multiplyScalar(this.ballHoldingDistance))
 
@@ -105,11 +139,10 @@ class Ball {
         let x = a / 5;
 
         let output = 2.5 + Math.log(x / (1 - x));
-
         if (output < 0) {
             output = 0;
         }
-
+        //this.log(output);
         return output;
     }
 
@@ -126,6 +159,14 @@ class Ball {
             this.speed.y *= -0.8;
 
             this.position.y += Math.abs(this.speed.y * this.deltaTime);
+
+            /*
+            if (this.currentSpeed.y < 0){
+                this.currentPosition.y += Math.abs(this.currentSpeed.y * this.deltaTime);
+            } else{
+                this.currentPosition.y -= Math.abs(this.currentSpeed.y * this.deltaTime);
+            }
+            */
 
             this.bounces += 1;
 
@@ -155,7 +196,7 @@ class Ball {
 
             if (z > -1.22 && z < 1.22) {
 
-                if (y < 0.65) {
+                if (/*y > 0.3 && */y < 0.65) {
                     return true;
                 }
             }

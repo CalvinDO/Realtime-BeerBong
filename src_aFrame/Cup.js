@@ -18,7 +18,7 @@ class Cup {
 
     visible = true;
 
-
+    
 
     constructor(_cupAFrame, _cupID, _position, _onlyVisual) {
         this.cupAFrame = _cupAFrame;
@@ -26,17 +26,17 @@ class Cup {
         this.position = _position;
         this.onlyVisual = _onlyVisual;
     }
-
+    
     update() {
-
+        
         if (!this.visible) {
             return;
         }
 
-        if (this.onlyVisual) {
+        if (this.onlyVisual){
             return;
         }
-
+        
         this.checkCollisions();
     }
 
@@ -48,7 +48,7 @@ class Cup {
 
         let XZMiddleDistance = ballXZ.sub(thisXZ);
 
-        if (XZMiddleDistance.length() < this.openingRadius) {
+        if (XZMiddleDistance.length() < this.openingRadius /*- (Ball.radius / 2)*/) {
 
             if (Ball.instance.position.y < this.position.y + this.height) {
 
@@ -58,6 +58,17 @@ class Cup {
                 }
             }
         }
+
+        /*else if (XZMiddleDistance.length() < this.openingRadius + Ball.radius) {
+
+            if (Ball.instance.position.y < this.position.y + this.height) {
+
+                if (Ball.instance.position.y >= this.position.y) {
+
+                    Ball.instance.currentSpeed = Ball.instance.position.clone().sub(this.position);
+                }
+            }
+        }*/
     }
 
     updateHTML() {
@@ -77,7 +88,7 @@ class Cup {
 
         ScaleEntity.instance.removeChild(this.cupAFrame);
 
-
+       
         if (this.cupID != 'red11' || this.cupID != 'blue11') {
             document.querySelector('#' + this.cupID).classList.add('empty')
         }

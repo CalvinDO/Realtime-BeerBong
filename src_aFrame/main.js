@@ -37,7 +37,7 @@ let aMarker;
 
 let camToMarker;
 
-let scale = 2.94;
+let scale = 4.5;
 
 
 if (ballThrow) {
@@ -450,7 +450,7 @@ function init() {
 
 function onSizeToggleChanged(change) {
 
-    scale = this.checked ? 6 : 1;
+    scale = this.checked ? 4.5 : 1;
 }
 
 //jAFRAME.registerSystem("postprocessing", {

@@ -405,6 +405,10 @@ function rotate(e) {
     }
 }
 
+function toggleSettings() {
+    let settings = document.querySelector('.settings')
+    settings.classList.toggle('active')
+}
 
 function init() {
 
@@ -419,7 +423,7 @@ function init() {
     addCups();
 
     //loadModel('Table.glb', pTable)
-
+    document.querySelector('.openClose').addEventListener('click', toggleSettings)
     document.querySelector('.cups.blue').addEventListener('click', rotate.bind('blue'))
     document.querySelector('.cups.red').addEventListener('click', rotate.bind('red'))
 

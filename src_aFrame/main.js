@@ -121,7 +121,8 @@ let pCups = [
     {
         x: 0.21,
         y: 0.67,
-        z: 0.75
+        z: 0.75,
+        id: "red11"
     },
 
     // enemies
@@ -193,7 +194,8 @@ let pCups = [
     {
         x: -0.21,
         y: 0.67,
-        z: -0.75
+        z: -0.75,
+        id: "blue11"
     }
 ]
 let pTable = {
@@ -246,7 +248,13 @@ function loadModel(model, position) {
 
             ScaleEntity.instance.appendChild(newCupaFrame);
 
-            let newCup = new Cup(newCupaFrame, position.id, position);
+            let newCup;
+            if (position.id == "red11" || position.id == "blue11") {
+                
+                newCup = new Cup(newCupaFrame, position.id, position, true);
+            } else {
+                newCup = new Cup(newCupaFrame, position.id, position, false);
+            }
 
             cups.push(newCup);
         } else {

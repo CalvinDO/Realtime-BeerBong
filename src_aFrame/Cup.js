@@ -18,11 +18,13 @@ class Cup {
 
     visible = true;
 
+    
 
-    constructor(_cupAFrame, _cupID, _position) {
+    constructor(_cupAFrame, _cupID, _position, _onlyVisual) {
         this.cupAFrame = _cupAFrame;
         this.cupID = _cupID;
         this.position = _position;
+        this.onlyVisual = _onlyVisual;
     }
     
     update() {
@@ -31,6 +33,10 @@ class Cup {
             return;
         }
 
+        if (this.onlyVisual){
+            return;
+        }
+        
         this.checkCollisions();
     }
 

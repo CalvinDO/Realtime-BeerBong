@@ -65,16 +65,36 @@
     width: 80%;
     margin: 0 10px;
     border: 2px solid whitesmoke;
+    height: 20px;
+    overflow: hidden;
 }
 
-.settings p {
+.settings .close {
+    margin: 0;
+    margin-right: 5px;
+    font-size: 16px;
+    transform: rotate(0deg);
+}
+
+.settings p:nth-child(1) {
     margin: 3px 0;
     margin-right: auto;
     margin-left: 10%;
 }
 
 .settings.active {
+   height: 100%;
+   overflow: unset;
+}
+
+.settings.active .close {
+    transform: rotate(45deg);
+}
+
+.openClose {
     display: flex;
+    flex-direction: row;
+    width: 100%;
 }
 
 .mode {
@@ -83,7 +103,7 @@
     align-items: center;
     width: 80%;
     margin-bottom: 5px;
-    padding: 10px 3px;
+    padding: 6px 3px;
     border: 1px solid whitesmoke;
     border-radius: 10px;
     background-color: rgb(40, 40, 40);
@@ -101,6 +121,18 @@
     /*color: unset;*/
     /*font-weight: normal;*/
     color: #ff4242;
+}
+
+.mode .label {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: flex-start;
+}
+
+.label p {
+    margin: 0;
+    margin-right: auto;
 }
 
 .switch {

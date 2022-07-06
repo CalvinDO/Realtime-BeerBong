@@ -4,7 +4,9 @@ import { Marker } from './Marker.js';
 import { ScaleEntity } from './ScaleEntity.js';
 
 
-class Cup extends THREE.Group {
+class Cup {
+
+    position;
 
     openingRadius = 0.092 / 2;
     height = 0.117;
@@ -12,25 +14,24 @@ class Cup extends THREE.Group {
 
     cupID;
 
-    constructor(_group, _cupAFrame, _cupID) {
+    onlyVisual;
 
-        super();
+    visible = true;
 
-        this.add(_group);
+
+    constructor(_cupAFrame, _cupID, _position) {
         this.cupAFrame = _cupAFrame;
-        this.cupID = _cupID
-
+        this.cupID = _cupID;
+        this.position = _position;
     }
-
+    
     update() {
-
+        
         if (!this.visible) {
             return;
         }
 
         this.checkCollisions();
-
-        //this.updateHTML();
     }
 
 
@@ -39,6 +40,7 @@ class Cup extends THREE.Group {
         let ballXZ = new THREE.Vector2(Ball.instance.position.x, Ball.instance.position.z);
         let thisXZ = new THREE.Vector2(this.position.x, this.position.z);
 
+        this.log(ballXZ.x.toFixed(2) + "   " + thisXZ.x.toFixed(2));
         let XZMiddleDistance = ballXZ.sub(thisXZ);
 
         if (XZMiddleDistance.length() < this.openingRadius /*- (Ball.radius / 2)*/) {
@@ -50,7 +52,9 @@ class Cup extends THREE.Group {
                     this.hit();
                 }
             }
-        } /*else if (XZMiddleDistance.length() < this.openingRadius + Ball.radius) {
+        }
+
+        /*else if (XZMiddleDistance.length() < this.openingRadius + Ball.radius) {
 
             if (Ball.instance.position.y < this.position.y + this.height) {
 
@@ -76,17 +80,19 @@ class Cup extends THREE.Group {
         Ball.instance.setBack();
 
         this.cupAFrame.setAttribute("display", "none");
+
         ScaleEntity.instance.removeChild(this.cupAFrame);
 
-        //alert(this.cupAFrame.getAttribute("display"));
+       
         if (this.cupID != 'red11' || this.cupID != 'blue11') {
-            //alert(this.cupID)
-           document.querySelector('#'+this.cupID).classList.add('empty')
+            document.querySelector('#' + this.cupID).classList.add('empty')
         }
-        
-        
     }
 
+    log(message) {
+        let display = document.querySelector("#display");
+        display.innerHTML = message.toString();
+    }
 }
 
 export { Cup }

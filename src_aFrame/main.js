@@ -37,16 +37,15 @@ let aMarker;
 
 let camToMarker;
 
-let scale = 2.94;
+let scale = 1;
 
 
 if (ballThrow) {
-    window.addEventListener("mousedown", onMouseDown);
+    //window.addEventListener("mousedown", onMouseDown);
     //window.addEventListener("mouseup", onMouseUp);
 
     window.addEventListener("touchstart", onTouchStart);
     window.addEventListener("touchend", onTouchEnd);
-
 }
 
 
@@ -213,8 +212,6 @@ let mouseUpPos = new THREE.Vector2();
 let cups = [];
 
 
-
-
 function addCups() {
     let i = 0
     for (let pCup of pCups) {
@@ -238,50 +235,22 @@ function installOrbitControls() {
 function loadModel(model, position) {
     loader.load('Assets/' + model, function (glb) {
 
-        const root = glb.scene
-        // root.scale.set(1.5, 1.5, 1.5)
-
+        const root = glb.scene;
 
         if (model == 'RedCup.glb' || model == 'BlueCup.glb') {
-
 
             let newCupaFrame = document.createElement("a-entity");
             newCupaFrame.setAttribute("position", position.x + " " + position.y + " " + position.z);
             newCupaFrame.setAttribute("scale", "1.0 1.0 1.0");
             newCupaFrame.setAttribute("gltf-model", './Assets/' + model);
+
             ScaleEntity.instance.appendChild(newCupaFrame);
 
-            let newCup = new Cup(root, newCupaFrame, position.id);
-            newCup.position.set(position.x, position.y, position.z)
-
-            /*
-            for (let i = 0; i < pCups.length; i++) {
-                let newCupaFrame = document.createElement("a-entity");
-                newCupaFrame.setAttribute("position", pCups[i].x + " " + pCups[i].y + " " + pCups[i].z);
-                newCupaFrame.setAttribute("scale", "1.0 1.0 1.0");
-
-                if (i <= 10) {
-
-                    newCupaFrame.setAttribute("gltf-model", './Assets/RedCup.glb');
-
-                    //aMarker.innerHTML += "<a-entity position='" + pCups[i].x + " " + pCups[i].y + " " + pCups[i].z + "' scale='1.0 1.0 1.0' gltf-model='./Assets/RedCup.glb'></a-entity>"
-                } else {
-
-                    newCupaFrame.setAttribute("gltf-model", './Assets/BlueCup.glb');
-
-                    //aMarker.innerHTML += "<a-entity position='" + pCups[i].x + " " + pCups[i].y + " " + pCups[i].z + "' scale='1.0 1.0 1.0' gltf-model='./Assets/BlueCup.glb'></a-entity>"
-                }
-            }
-            */
+            let newCup = new Cup(newCupaFrame, position.id, position);
 
             cups.push(newCup);
-            threeScene.add(newCup);
-
-            //console.log("own Cup Object: ", newCup);
-
         } else {
             root.position.set(position.x, position.y, position.z)
-            threeScene.add(root);
         }
 
     }, function (xhr) {
@@ -291,39 +260,6 @@ function loadModel(model, position) {
     })
 }
 
-
-// async function loadModels() {
-//
-//     // loader = THREE.GLTFLoader();
-//     //let loader = new THREE.GLTFLoader();
-//     let table = await Importer.import("Assets/Table.obj");
-//     scene.add(table);
-//
-//     let cup = await Importer.import("Assets/Cup.obj");
-//     scene.add(cup);
-// }
-
-function setupSceneCamRenderer() {
-
-    threeScene = new THREE.Scene();
-
-    threeScene.background = new THREE.Color(0xdddddd)
-
-    Camera.instance = document.querySelector("a-entity[camera]");
-    Camera.instance.setAttribute("rotation-position-reader");
-
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.y = 1.3;
-    camera.position.z = 1.6;
-    camera.rotation.x = -0.5;
-
-
-    renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-    //document.body.appendChild(ARButton.createButton(renderer));
-    renderer.xr.enabled = true;
-}
 
 function addLights() {
 
@@ -362,76 +298,12 @@ function instantiateMaterials() {
 }
 
 function addBall() {
-    ball = new Ball(materials[shading], gravity);
 
-    threeScene.add(ball);
+    ball = new Ball(gravity);
 
-    //ball.position.copy(currentPosition)
     ball.updatePosition();
-
-    //alert("Ball start position z== " + ball.position.z);
-    //customConsole.log(ball.currentPosition);
 }
 
-
-
-function addDrunkEffect() {
-
-    const planeGeometry = new THREE.PlaneGeometry(1, 1);
-    //customConsole.log(planeGeometry.parameters.width);
-    let drunkLevel = 1.0; //0.5 = drunk; 6 = good
-    let drunk = true;
-
-    var planeMaterial = new THREE.ShaderMaterial({
-        uniforms: {
-            size: {
-                value: new THREE.Vector3(planeGeometry.parameters.width, planeGeometry.parameters.height, planeGeometry.parameters.depth).multiplyScalar(0.5)
-            },
-            u_resolution: {
-                value: new THREE.Vector2(window.innerWidth, window.innerHeight)
-            },
-            length_center_to_corner: {
-                value: new THREE.Vector2(window.innerWidth, window.innerHeight).length()
-            },
-            drunkStage: {
-                value: drunkLevel
-            },
-            drunk: {
-                value: drunk
-            }
-        },
-        vertexShader: vertexShader,
-        fragmentShader: [
-            "uniform vec3 size;",
-            "uniform vec2 u_resolution;",
-            "uniform float length_center_to_corner;",
-            "uniform float drunkStage;",
-            "uniform bool drunk;",
-            "void main()",
-            "{",
-            "if(drunk) {",
-            "float rad = (size.x/0.9) * length_center_to_corner;",
-            "vec2 pos = vec2((u_resolution.x/2.0), (u_resolution.y/2.0));",
-            "float relPosX = abs(gl_FragCoord.x - pos.x);",
-            "float relPosY = abs(gl_FragCoord.y - pos.y);",
-            "float fragDist = sqrt((relPosX * relPosX) + (relPosY * relPosY));",
-            "float circleInfo = (rad - fragDist)/rad;",
-            "float value = smoothstep(1.0, 0.0, sqrt(circleInfo * drunkStage));",
-            "gl_FragColor = vec4(1,1,1,value);",
-            "} else {",
-            "gl_FragColor = vec4(0.0,0.0,0.0,0 );",
-            "}",
-            "}"
-        ].join("\n"),
-        transparent: true,
-        opacity: 0.0
-    });
-
-    const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-    plane.name = "drunkFilter";
-    plane.position.set(0.0, 0.0, 4.9);
-    threeScene.add(plane);
-}
 
 
 
@@ -441,59 +313,17 @@ function calculateDeltaTime() {
 }
 
 
-
 function onTouchStart(_event) {
     mouseDownPos = new THREE.Vector2(_event.touches[0].clientX, _event.touches[0].clientY);
 }
 
 function onTouchEnd(_event) {
+
     mouseUpPos = new THREE.Vector2(_event.changedTouches[0].clientX, _event.changedTouches[0].clientY);
 
     let swipe = mouseUpPos.sub(mouseDownPos);
 
     ball.tossFromCam(swipe);
-    
-
-    // console.log(swipe);
-    //console.log(ball.position);
-    // console.log(swipe);
-    //console.log(ball.position);
-    //console.log(markerPosition);
-    
-    //console.log(x, y, z);
-
-    
-    /*
-    position.x = x;
-    position.y = y;
-    position.z = z;
-    position.set(x, y, z);
-    */
-    //console.log(position, x, y, z);
-    //console.log("before quat: ", position.x, position.y, position.z)
-    //console.log("real position: ", Marker.instance.object3D.getWorldPosition(new THREE.Vector3()));
-
-    //let rotation = Marker.instance.getAttribute("rotation");
-    //console.log("cam rotation: ", Camera.instance.object3D.getWorldQuaternion(new THREE.Quaternion()));
-
-    //console.log(rotation.angleTo(new THREE.Quaternion()));
-    //let invertedRotation = new THREE.Quaternion();
-    //invertedRotation.copy(rotation);
-    //invertedRotation.invert();
-
-    //console.log("after quat: ", position.x, position.y, position.z);
-
-    //var worldPos = markerPosition.clone();
-    //worldPos.setFromMatrixPosition(Camera.instance.object3D.matrixWorld);
-    //console.log(Marker.instance.object3D.getWorldPosition(new THREE.Vector3()));
-
-   
-
-    //ball.toss(swipe);
-
-    //log(ball.position.z);
-
-    //customConsole.log(ball);
 }
 
 
@@ -511,7 +341,7 @@ function calculateCameraPosition(){
 
     let rotation = Marker.instance.object3D.getWorldQuaternion(new THREE.Quaternion());
     
-    position.applyQuaternion(rotation.inverse()/*Marker.instance.getAttribute("rotation")*/);
+    position.applyQuaternion(rotation.inverse());
     
     let zeroPos = new THREE.Vector3();
     let camPos = zeroPos.clone().sub(position);
@@ -526,42 +356,8 @@ function log(message) {
 
 }
 
-function onMouseDown(_event) {
-    mouseDownPos = new THREE.Vector2(_event.clientX, _event.clientY);
-}
-/*
-function onMouseUp(_event) {
-    mouseUpPos = new THREE.Vector2(_event.clientX, _event.clientY);
-
-    //let swipe = mouseUpPos.sub(mouseDownPos);
-    // console.log(swipe);
-    //console.log(ball.position);
 
 
-    let markerPosition = Marker.instance.getAttribute("position");
-
-    //console.log(markerPosition);
-    let x = markerPosition.x;
-    let y = markerPosition.y;
-    let z = markerPosition.z;
-    //console.log(x, y, z);
-    let position = new THREE.Vector3(x, y, z);
-    //console.log(position, x, y, z);
-    position.x = x;
-    position.y = y;
-    position.z = z;
-
-
-
-    //var worldPos = markerPosition.clone();
-    //worldPos.setFromMatrixPosition(Camera.instance.object3D.matrixWorld);
-    //console.log(Marker.instance.object3D.getWorldPosition(new THREE.Vector3()));
-
-    //ball.tossDirect(markerPosition);
-    ball.tossDirect(Marker.instance.object3D.getWorldPosition(new THREE.Vector3()));
-    //ball.toss(swipe);
-}
-*/
 function onKeyDown(_event) {
     // console.log(_event)
     if (_event.code === 'Space') {
@@ -570,58 +366,23 @@ function onKeyDown(_event) {
 }
 
 
-
-
-
-/*
-function setupGui() {
-
-    effectController = {
-        newShading: 'glossy'
-    };
-
-    const gui = new GUI();
-    gui.add(effectController, 'newShading', ['wireframe', 'flat', 'smooth', 'glossy']).name('Shading').onChange(render);
-}
-*/
-
 function animate() {
-    //alert("start of animate");
 
     calculateDeltaTime();
 
     calculateCameraPosition();
 
     if (ball) {
-        ball.rotateY(1 * deltaTime)
-        ball.rotateZ(1 * deltaTime)
-
         ball.updatePhysics(deltaTime);
     }
-    //log(ball.position.z);
-
 
     cups.forEach(cup => cup.update());
-
-    //shading = effectController.newShading;
 
     if (controls) {
         controls.update()
     }
 
     ScaleEntity.instance.setAttribute("scale", "" + scale + " " + scale + " " + scale);
-
-    //worldPos = Camera.instance.object3D.getWorldPosition(position);
-    //log(worldPos.x.toFixed(2) + " ; " + worldPos.y.toFixed(2) + " ; " + worldPos.z.toFixed(2) + " || Time: " + Date.now());
-
-    //console.log(Camera.instance.getAttribute("camera"));
-
-
-    //console.log(Camera.instance.object3D.matrixWorld);
-
-    //log(worldPos.x);
-
-    renderer.render(threeScene, camera);
 
 
     requestAnimationFrame(animate);
@@ -646,90 +407,27 @@ function rotate(e) {
 
 
 function init() {
-    //alert("main init working!!");
 
-    //customConsole = document.querySelector("#console");
-
-    //alert("main init working!");
-
-    // alert("setup fake cups");
-
-    //setupGui();
-
-    //aMarker = document.getElementById("a_Marker");
+    Camera.instance = document.querySelector("a-entity[camera]");
+    Camera.instance.setAttribute("rotation-position-reader");
     Marker.instance = document.getElementById("a_Marker");
     Scene.instance = document.getElementById("a_Scene");
     ScaleEntity.instance = document.getElementById("a_ScaleEntity");
-
-    //log(Date.now() + " !!!!");
-    setupSceneCamRenderer();
-
-    addLights();
-
-    instantiateMaterials();
 
     addBall();
 
     addCups();
 
+    //loadModel('Table.glb', pTable)
 
-    loadModel('Table.glb', pTable)
-
-    //addDrunkEffect();
-
-    //document.querySelectorAll('.cups').addEventListener('click', rotate)
     document.querySelector('.cups.blue').addEventListener('click', rotate.bind('blue'))
     document.querySelector('.cups.red').addEventListener('click', rotate.bind('red'))
 
     if (orbitControls) {
         installOrbitControls();
     }
-    //alert("added ball and cups and table and orbit controls!");
-
-    /*
-    AFRAME.registerComponent('rotation-position-reader', {
-        tick: function () {
-            // `this.el` is the element.
-            // `object3D` is the three.js object.
-
-            // `rotation` is a three.js Euler using radians. `quaternion` also available.
-            //console.log(this.el.object3D.rotation);
-
-            // `position` is a three.js Vector3.
-            let markerPosition = Marker.instance.getAttribute("position");
-            //console.log(markerPosition);
-
-            let x = markerPosition.x;
-            let y = markerPosition.y;
-            let z = markerPosition.z;
-            //console.log(x, y, z);
-            let position = new THREE.Vector3(1, 2, 3);
-            position.x = x;
-            position.y = y;
-            position.z = z;
-
-            //console.log(position, x, y, z);
-
-
-            var worldPos = new THREE.Vector3();
-
-            var quaternion = new THREE.Quaternion();
-
-            //worldPos.setFromMatrixPosition(this.el.object3D.matrixWorld);
-            //worldPos = this.el.object3D.getWorldPosition(position);
-            //worldPos = 
-            //log(this.el.object3D.position.x + " " + this.el.object3D.position.y + " " + this.el.object3D.position.z);
-            //log(worldPos.x.toFixed(2) + " ; " + worldPos.y.toFixed(2) + " ; " + worldPos.z.toFixed(2) + " || Time: " + Date.now());
-            //log(Camera.instance.getAttribute("position").x);
-            //console.log(this.el.object3D.getWorldQuaternion(quaternion));
-        }
-    });
-    */
 
     animate();
-    //requestAnimationFrame(animate());
-
-    /* */
 }
 
 
@@ -798,3 +496,154 @@ function init() {
 //j        };
 //j    }
 //j});
+
+
+/*
+function onMouseUp(_event) {
+    mouseUpPos = new THREE.Vector2(_event.clientX, _event.clientY);
+
+    //let swipe = mouseUpPos.sub(mouseDownPos);
+    // console.log(swipe);
+    //console.log(ball.position);
+
+
+    let markerPosition = Marker.instance.getAttribute("position");
+
+    //console.log(markerPosition);
+    let x = markerPosition.x;
+    let y = markerPosition.y;
+    let z = markerPosition.z;
+    //console.log(x, y, z);
+    let position = new THREE.Vector3(x, y, z);
+    //console.log(position, x, y, z);
+    position.x = x;
+    position.y = y;
+    position.z = z;
+
+
+
+    //var worldPos = markerPosition.clone();
+    //worldPos.setFromMatrixPosition(Camera.instance.object3D.matrixWorld);
+    //console.log(Marker.instance.object3D.getWorldPosition(new THREE.Vector3()));
+
+    //ball.tossDirect(markerPosition);
+    ball.tossDirect(Marker.instance.object3D.getWorldPosition(new THREE.Vector3()));
+    //ball.toss(swipe);
+}
+*/
+
+/*
+function setupGui() {
+
+    effectController = {
+        newShading: 'glossy'
+    };
+
+    const gui = new GUI();
+    gui.add(effectController, 'newShading', ['wireframe', 'flat', 'smooth', 'glossy']).name('Shading').onChange(render);
+}
+*/
+
+
+function setupSceneCamRenderer() {
+    /*
+   
+
+    threeScene = new THREE.Scene();
+
+    threeScene.background = new THREE.Color(0xdddddd)
+
+
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.y = 1.3;
+    camera.position.z = 1.6;
+    camera.rotation.x = -0.5;
+
+
+    renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+    //document.body.appendChild(ARButton.createButton(renderer));
+    renderer.xr.enabled = true;
+    */
+}
+
+
+
+// async function loadModels() {
+//
+//     // loader = THREE.GLTFLoader();
+//     //let loader = new THREE.GLTFLoader();
+//     let table = await Importer.import("Assets/Table.obj");
+//     scene.add(table);
+//
+//     let cup = await Importer.import("Assets/Cup.obj");
+//     scene.add(cup);
+// }
+
+
+/*
+function onMouseDown(_event) {
+    mouseDownPos = new THREE.Vector2(_event.clientX, _event.clientY);
+}
+*/
+
+
+function addDrunkEffect() {
+
+    const planeGeometry = new THREE.PlaneGeometry(1, 1);
+    //customConsole.log(planeGeometry.parameters.width);
+    let drunkLevel = 1.0; //0.5 = drunk; 6 = good
+    let drunk = true;
+
+    var planeMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+            size: {
+                value: new THREE.Vector3(planeGeometry.parameters.width, planeGeometry.parameters.height, planeGeometry.parameters.depth).multiplyScalar(0.5)
+            },
+            u_resolution: {
+                value: new THREE.Vector2(window.innerWidth, window.innerHeight)
+            },
+            length_center_to_corner: {
+                value: new THREE.Vector2(window.innerWidth, window.innerHeight).length()
+            },
+            drunkStage: {
+                value: drunkLevel
+            },
+            drunk: {
+                value: drunk
+            }
+        },
+        vertexShader: vertexShader,
+        fragmentShader: [
+            "uniform vec3 size;",
+            "uniform vec2 u_resolution;",
+            "uniform float length_center_to_corner;",
+            "uniform float drunkStage;",
+            "uniform bool drunk;",
+            "void main()",
+            "{",
+            "if(drunk) {",
+            "float rad = (size.x/0.9) * length_center_to_corner;",
+            "vec2 pos = vec2((u_resolution.x/2.0), (u_resolution.y/2.0));",
+            "float relPosX = abs(gl_FragCoord.x - pos.x);",
+            "float relPosY = abs(gl_FragCoord.y - pos.y);",
+            "float fragDist = sqrt((relPosX * relPosX) + (relPosY * relPosY));",
+            "float circleInfo = (rad - fragDist)/rad;",
+            "float value = smoothstep(1.0, 0.0, sqrt(circleInfo * drunkStage));",
+            "gl_FragColor = vec4(1,1,1,value);",
+            "} else {",
+            "gl_FragColor = vec4(0.0,0.0,0.0,0 );",
+            "}",
+            "}"
+        ].join("\n"),
+        transparent: true,
+        opacity: 0.0
+    });
+
+    const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+    plane.name = "drunkFilter";
+    plane.position.set(0.0, 0.0, 4.9);
+    threeScene.add(plane);
+}
+

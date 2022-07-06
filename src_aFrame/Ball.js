@@ -2,10 +2,10 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.mod
 import { Camera } from './Camera.js';
 
 
-class Ball extends THREE.Mesh {
+class Ball {
 
-    currentSpeed = new THREE.Vector3(0, 0, 0);
-    currentPosition = new THREE.Vector3(0, 1.2, 1.3);
+    speed = new THREE.Vector3(0, 0, 0);
+    position = new THREE.Vector3(0, 1.2, 1.3);
     gravity;
     deltaTime = 0.02;
 
@@ -29,30 +29,28 @@ class Ball extends THREE.Mesh {
     ballHoldingDistance = 0.4;
 
 
-    constructor(_material, _gravity) {
-
-        super(new THREE.SphereGeometry(Ball.radius, 32, 16), _material);
+    constructor(_gravity) {
+        
+        Ball.instance = this;
 
         this.gravity = _gravity;
 
-        Ball.instance = this;
-
         this.element = document.querySelector("a-sphere");
+
         this.soundElement = document.querySelector("a-sphere a-sound");
 
-        //this.log("'" + Ball.radius + " " + Ball.radius +" " + Ball.radius + "'")
+        //this.log(this.soundElement.getAttribute("src"));
+
         this.element.setAttribute("scale", Ball.radius + " " + Ball.radius + " " + Ball.radius);
-        //this.log(this.element.getAttribute("scale").toString());
+        
     }
 
     updatePhysics(_deltaTime) {
 
         this.deltaTime = _deltaTime;
 
-        //console.log(this.currentPosition, this.currentSpeed, this.position);
 
         if (this.isKinematic) {
-            //this.currentPosition = this.position = 
             this.setBackToCamPosPlusOffset();
             return;
         }
@@ -62,28 +60,20 @@ class Ball extends THREE.Mesh {
         this.updatePosition();
 
 
-
         this.framesAlive++;
-        if (this.framesAlive > 50) {
-            //alert("frames alive = " + this.framesAlive + ".  CurrentPosition Z = " + this.currentPosition.z);
-        }
-
-        //this.log(this.framesAlive);
     }
 
     updatePosition() {
 
-        this.currentPosition.add(this.currentSpeed.clone().multiplyScalar(this.deltaTime));
-
-        this.position.copy(this.currentPosition);
+        this.position.add(this.speed.clone().multiplyScalar(this.deltaTime));
 
         this.updateHTML();
     }
 
     setBack() {
 
-        this.currentPosition.set(0, 1.2, 1.3)
-        this.currentSpeed.set(0, 0, 0);
+        this.position.set(0, 1.2, 1.3)
+        this.speed.set(0, 0, 0);
 
         this.updatePosition();
 
@@ -98,14 +88,10 @@ class Ball extends THREE.Mesh {
 
     setBackTo(_position) {
 
-        this.currentPosition.set(_position.x, _position.y, _position.z)
-        this.currentSpeed.set(0, 0, 0);
-        //this.log(this.currentPosition.x.toFixed(2) + " ; " + this.currentPosition.y.toFixed(2) + " ; " + this.currentPosition.z.toFixed(2) + " || Time: " + Date.now());
+        this.position.set(_position.x, _position.y, _position.z)
+        this.speed.set(0, 0, 0);
 
         this.updatePosition();
-
-        //this.gravity.set(0, -9.81, 0);
-        //this.deltaTime = 0.02;
 
         this.bounces = 0;
 
@@ -119,12 +105,9 @@ class Ball extends THREE.Mesh {
         _swipe.multiplyScalar(Ball.tossFactor);
 
         let swipe3D = new THREE.Vector3(_swipe.x, -_swipe.y * 2, _swipe.y);
-        this.currentSpeed = swipe3D;
+        this.speed = swipe3D;
 
         this.isKinematic = false;
-
-        this.log("BAll says: tossed!");
-        //alert("BAll says: tossed!");
     }
 
     tossFromCam(_swipe) {
@@ -133,63 +116,49 @@ class Ball extends THREE.Mesh {
 
         let zeroPos = new THREE.Vector3();
 
-        //this.setBackTo((new THREE.Vector3(_toss.x, _toss.y, _toss.z)).multiplyScalar(ballSetBackFactor));
+        
         let camPos = Camera.instance.position.clone();
         camPos.sub(camPos.clone().normalize().multiplyScalar(this.ballHoldingDistance))
 
         this.setBackTo(camPos);
 
-        //this.log(_toss.x.toFixed(2) + " ; " + _toss.y.toFixed(2) + " ; " + _toss.z.toFixed(2) + " || Time: " + Date.now());
+        this.speed = zeroPos.clone().sub(Camera.instance.position).clone().normalize().multiplyScalar(this.getLogit(-_swipe.y) * 3);
+        this.speed.add(new THREE.Vector3(0, this.getLogit(-_swipe.y) * 3, 0));
 
-        this.currentSpeed = zeroPos.clone().sub(Camera.instance.position).clone().normalize().multiplyScalar(this.getLogit(-_swipe.y) * 3);
-        this.currentSpeed.add(new THREE.Vector3(0, this.getLogit(-_swipe.y) * 3, 0));
-
-
-        //this.log(this.getLogit(-_swipe.y)); 
 
         let crossedToLeft = camPos.clone().cross(new THREE.Vector3(camPos.x, 0, camPos.z));
         crossedToLeft.normalize();
         crossedToLeft.multiplyScalar(_swipe.x / 2);
 
-        this.currentSpeed.add(crossedToLeft);
+        this.speed.add(crossedToLeft);
 
-        //this.currentSpeed.multiplyScalar(0.0001);
-        //this.isKinematic = false;
         this.isKinematic = false;
     }
 
     getLogit(a) {
-        //assuming 5 is max swipe after factor
         let x = a / 5;
-        //this.log(x.toFixed(2) +  "    "  + (1.8 + Math.log(x/(1-x))).toFixed(4) );
 
         let output = 2.5 + Math.log(x / (1 - x));
         if (output < 0) {
             output = 0;
         }
-        this.log(output);
+        //this.log(output);
         return output;
     }
 
     log(message) {
         let display = document.querySelector("#display");
         display.innerHTML = message.toString();
-
     }
 
     updateSpeed() {
-        //console.log("gravity: ", this.gravity);
-
-        //console.log(this.currentSpeed, this.deltaTime);
-
-
 
         if (this.hitsSomething()) {
 
             this.soundElement.play();
-            this.currentSpeed.y *= -0.8;
+            this.speed.y *= -0.8;
 
-            this.currentPosition.y += Math.abs(this.currentSpeed.y * this.deltaTime);
+            this.position.y += Math.abs(this.speed.y * this.deltaTime);
 
             /*
             if (this.currentSpeed.y < 0){
@@ -208,21 +177,15 @@ class Ball extends THREE.Mesh {
         }
 
         let scaledGravity = this.gravity.clone().multiplyScalar(this.deltaTime);
-        //console.log("scaledGravity: ", scaledGravity);
 
-
-        this.currentSpeed.add(scaledGravity);
-
-
-
-        //console.log("gravity: ", this.gravity);
+        this.speed.add(scaledGravity);
     }
 
     hitsSomething() {
 
-        let x = this.currentPosition.x;
-        let y = this.currentPosition.y;
-        let z = this.currentPosition.z;
+        let x = this.position.x;
+        let y = this.position.y;
+        let z = this.position.z;
 
 
         if (y < 0) {
@@ -251,9 +214,6 @@ class Ball extends THREE.Mesh {
 
     updateHTML() {
         this.element.setAttribute("position", this.position.x + " " + this.position.y + " " + this.position.z);
-        //console.log(this.element.attributes);
-
-        //this.log(this.currentPosition.y);
     }
 }
 

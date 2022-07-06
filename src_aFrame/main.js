@@ -450,7 +450,7 @@ function init() {
 
 function onSizeToggleChanged(change) {
 
-    scale = this.checked ? 2.94 : 1;
+    scale = this.checked ? 6 : 1;
 }
 
 //jAFRAME.registerSystem("postprocessing", {

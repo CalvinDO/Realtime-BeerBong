@@ -1,6 +1,5 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js'
 import { Ball } from './Ball.js'
-import { Marker } from './Marker.js';
 import { ScaleEntity } from './ScaleEntity.js';
 
 
@@ -58,17 +57,6 @@ class Cup {
                 }
             }
         }
-
-        /*else if (XZMiddleDistance.length() < this.openingRadius + Ball.radius) {
-
-            if (Ball.instance.position.y < this.position.y + this.height) {
-
-                if (Ball.instance.position.y >= this.position.y) {
-
-                    Ball.instance.currentSpeed = Ball.instance.position.clone().sub(this.position);
-                }
-            }
-        }*/
     }
 
     updateHTML() {

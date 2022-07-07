@@ -71,10 +71,6 @@ class Ball {
 
         this.updatePosition();
 
-        //this.gravity.set(0, -9.81, 0);
-        //this.deltaTime = 0.02;
-
-
         this.bounces = 0;
 
         this.isKinematic = true;
@@ -136,7 +132,7 @@ class Ball {
         if (output < 0) {
             output = 0;
         }
-        //this.log(output);
+
         return output;
     }
 
@@ -152,14 +148,6 @@ class Ball {
             this.speed.y *= -0.8;
 
             this.position.y += Math.abs(this.speed.y * this.deltaTime);
-
-            /*
-            if (this.currentSpeed.y < 0){
-                this.currentPosition.y += Math.abs(this.currentSpeed.y * this.deltaTime);
-            } else{
-                this.currentPosition.y -= Math.abs(this.currentSpeed.y * this.deltaTime);
-            }
-            */
 
             this.bounces += 1;
 

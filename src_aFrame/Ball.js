@@ -13,8 +13,6 @@ class Ball {
 
     element;
 
-    soundElement;
-
     static radius = 0.02;
 
     static instance;
@@ -36,10 +34,6 @@ class Ball {
         this.gravity = _gravity;
 
         this.element = document.querySelector("a-sphere");
-
-        this.soundElement = document.querySelector("a-sphere a-sound");
-
-        //this.log(this.soundElement.getAttribute("src"));
 
         this.element.setAttribute("scale", Ball.radius + " " + Ball.radius + " " + Ball.radius);
         
@@ -155,7 +149,6 @@ class Ball {
 
         if (this.hitsSomething()) {
 
-            this.soundElement.play();
             this.speed.y *= -0.8;
 
             this.position.y += Math.abs(this.speed.y * this.deltaTime);

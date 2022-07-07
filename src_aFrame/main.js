@@ -1,17 +1,12 @@
-
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
 import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 import { Ball } from './Ball.js'
 import { Cup } from './Cup.js'
-import { ARButton } from './ARButton.js'
 import { Marker } from './Marker.js';
 import { Camera } from './Camera.js';
 import { Scene } from './Scene.js';
 import { ScaleEntity } from './ScaleEntity.js';
-
-//document.addEventListener("keydown", onKeyDown)
-
 
 
 let threeScene;
@@ -26,10 +21,6 @@ const loader = new GLTFLoader();
 let orbitControls = false;
 let ballThrow = true;
 
-let customShader;
-let customShader2;
-let customShader3;
-
 
 let customConsole;
 
@@ -41,9 +32,6 @@ let scale = 4.5;
 
 
 if (ballThrow) {
-    //window.addEventListener("mousedown", onMouseDown);
-    //window.addEventListener("mouseup", onMouseUp);
-
     window.addEventListener("touchstart", onTouchStart);
     window.addEventListener("touchend", onTouchEnd);
 }
@@ -226,7 +214,6 @@ function addCups() {
         loadModel(src, pCup)
         i++
     }
-    // loadModel('Cup.glb', pCups[0])
 }
 
 function installOrbitControls() {
@@ -367,7 +354,6 @@ function log(message) {
 
 
 function onKeyDown(_event) {
-    // console.log(_event)
     if (_event.code === 'Space') {
         ball.setBack()
     }
@@ -432,7 +418,6 @@ function init() {
 
     addCups();
 
-    //loadModel('Table.glb', pTable)
     document.querySelector('.openClose').addEventListener('click', toggleSettings)
     document.querySelector('.cups.blue').addEventListener('click', rotate.bind('blue'))
     document.querySelector('.cups.red').addEventListener('click', rotate.bind('red'))
@@ -452,220 +437,3 @@ function onSizeToggleChanged(change) {
 
     scale = this.checked ? 4.5 : 1;
 }
-
-//jAFRAME.registerSystem("postprocessing", {
-//j
-//j	composer: null,
-//j	originalRenderMethod: null,
-//j
-//j	/**
-//j	 * Initialises this system.
-//j	 */
-//j
-//j	init() {
-//j		console.log("hi");
-//j		const sceneEl = this.sceneEl;
-//j
-//j        if (!sceneEl.hasLoaded) {
-//j            sceneEl.addEventListener('render-target-loaded', this.init.bind(this));
-//j            return;
-//j          }
-//j
-//j		const scene = sceneEl.object3D;
-//j		const renderer = sceneEl.renderer;
-//j		const render = renderer.render;
-//j		const camera = sceneEl.camera;
-//j
-//j		const clock = new THREE.Clock();
-//j		const composer = new EffectComposer(renderer);
-//j
-//j		this.composer = composer;
-//j		this.originalRenderMethod = render;
-//j
-//j		const renderPass = new RenderPass(scene, camera);
-//j    
-//j		composer.addPass(renderPass);
-//j        
-//j
-//j        customShader = new ShaderPass( TestShader ); 
-//j        customShader.renderToScreen = true;
-//j        composer.addPass( customShader );
-//j
-//j        this.composer = composer;
-//j        this.t = 0;
-//j        this.dt = 0;
-//j        this.bind();
-//j	},
-//j    tick: function (t, dt) {
-//j        this.t = t;
-//j        this.dt = dt;
-//j    },
-//j    bind: function () {
-//j        console.log("hi bind");
-//j        const renderer = this.sceneEl.renderer;
-//j        const render = renderer.render;
-//j        const system = this;
-//j        let isDigest = false;
-//j
-//j        renderer.render = function () {
-//j            if (isDigest) {
-//j                render.apply(this, arguments);
-//j            } else {
-//j                isDigest = true;
-//j                system.composer.render(system.dt);
-//j                isDigest = false;
-//j            }
-//j        };
-//j    }
-//j});
-
-
-/*
-function onMouseUp(_event) {
-    mouseUpPos = new THREE.Vector2(_event.clientX, _event.clientY);
-
-    //let swipe = mouseUpPos.sub(mouseDownPos);
-    // console.log(swipe);
-    //console.log(ball.position);
-
-
-    let markerPosition = Marker.instance.getAttribute("position");
-
-    //console.log(markerPosition);
-    let x = markerPosition.x;
-    let y = markerPosition.y;
-    let z = markerPosition.z;
-    //console.log(x, y, z);
-    let position = new THREE.Vector3(x, y, z);
-    //console.log(position, x, y, z);
-    position.x = x;
-    position.y = y;
-    position.z = z;
-
-
-
-    //var worldPos = markerPosition.clone();
-    //worldPos.setFromMatrixPosition(Camera.instance.object3D.matrixWorld);
-    //console.log(Marker.instance.object3D.getWorldPosition(new THREE.Vector3()));
-
-    //ball.tossDirect(markerPosition);
-    ball.tossDirect(Marker.instance.object3D.getWorldPosition(new THREE.Vector3()));
-    //ball.toss(swipe);
-}
-*/
-
-/*
-function setupGui() {
-
-    effectController = {
-        newShading: 'glossy'
-    };
-
-    const gui = new GUI();
-    gui.add(effectController, 'newShading', ['wireframe', 'flat', 'smooth', 'glossy']).name('Shading').onChange(render);
-}
-*/
-
-
-function setupSceneCamRenderer() {
-    /*
-   
-
-    threeScene = new THREE.Scene();
-
-    threeScene.background = new THREE.Color(0xdddddd)
-
-
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.y = 1.3;
-    camera.position.z = 1.6;
-    camera.rotation.x = -0.5;
-
-
-    renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-    //document.body.appendChild(ARButton.createButton(renderer));
-    renderer.xr.enabled = true;
-    */
-}
-
-
-
-// async function loadModels() {
-//
-//     // loader = THREE.GLTFLoader();
-//     //let loader = new THREE.GLTFLoader();
-//     let table = await Importer.import("Assets/Table.obj");
-//     scene.add(table);
-//
-//     let cup = await Importer.import("Assets/Cup.obj");
-//     scene.add(cup);
-// }
-
-
-/*
-function onMouseDown(_event) {
-    mouseDownPos = new THREE.Vector2(_event.clientX, _event.clientY);
-}
-*/
-
-
-function addDrunkEffect() {
-
-    const planeGeometry = new THREE.PlaneGeometry(1, 1);
-    //customConsole.log(planeGeometry.parameters.width);
-    let drunkLevel = 1.0; //0.5 = drunk; 6 = good
-    let drunk = true;
-
-    var planeMaterial = new THREE.ShaderMaterial({
-        uniforms: {
-            size: {
-                value: new THREE.Vector3(planeGeometry.parameters.width, planeGeometry.parameters.height, planeGeometry.parameters.depth).multiplyScalar(0.5)
-            },
-            u_resolution: {
-                value: new THREE.Vector2(window.innerWidth, window.innerHeight)
-            },
-            length_center_to_corner: {
-                value: new THREE.Vector2(window.innerWidth, window.innerHeight).length()
-            },
-            drunkStage: {
-                value: drunkLevel
-            },
-            drunk: {
-                value: drunk
-            }
-        },
-        vertexShader: vertexShader,
-        fragmentShader: [
-            "uniform vec3 size;",
-            "uniform vec2 u_resolution;",
-            "uniform float length_center_to_corner;",
-            "uniform float drunkStage;",
-            "uniform bool drunk;",
-            "void main()",
-            "{",
-            "if(drunk) {",
-            "float rad = (size.x/0.9) * length_center_to_corner;",
-            "vec2 pos = vec2((u_resolution.x/2.0), (u_resolution.y/2.0));",
-            "float relPosX = abs(gl_FragCoord.x - pos.x);",
-            "float relPosY = abs(gl_FragCoord.y - pos.y);",
-            "float fragDist = sqrt((relPosX * relPosX) + (relPosY * relPosY));",
-            "float circleInfo = (rad - fragDist)/rad;",
-            "float value = smoothstep(1.0, 0.0, sqrt(circleInfo * drunkStage));",
-            "gl_FragColor = vec4(1,1,1,value);",
-            "} else {",
-            "gl_FragColor = vec4(0.0,0.0,0.0,0 );",
-            "}",
-            "}"
-        ].join("\n"),
-        transparent: true,
-        opacity: 0.0
-    });
-
-    const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-    plane.name = "drunkFilter";
-    plane.position.set(0.0, 0.0, 4.9);
-    threeScene.add(plane);
-}
-

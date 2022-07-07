@@ -8,7 +8,6 @@ import { Camera } from './Camera.js';
 import { Scene } from './Scene.js';
 import { ScaleEntity } from './ScaleEntity.js';
 
-
 let ball;
 let renderer;
 let camera;
@@ -240,37 +239,27 @@ function loadModel(model, position) {
 }
 
 function addBall() {
-
     ball = new Ball(gravity);
-
     ball.updatePosition();
 }
-
-
-
 
 function calculateDeltaTime() {
     deltaTime = (Date.now() - now) / 1000;
     now = Date.now();
 }
 
-
 function onTouchStart(_event) {
     mouseDownPos = new THREE.Vector2(_event.touches[0].clientX, _event.touches[0].clientY);
 }
 
 function onTouchEnd(_event) {
-
     mouseUpPos = new THREE.Vector2(_event.changedTouches[0].clientX, _event.changedTouches[0].clientY);
-
     let swipe = mouseUpPos.sub(mouseDownPos);
-
     ball.tossFromCam(swipe);
 }
 
 
 function calculateCameraPosition() {
-
     let markerPosition = Marker.instance.getAttribute("position");
 
     let x = markerPosition.x;
@@ -292,9 +281,7 @@ function calculateCameraPosition() {
 }
 
 function animate() {
-
     calculateDeltaTime();
-
     calculateCameraPosition();
 
     if (ball) {
@@ -308,7 +295,6 @@ function animate() {
     }
 
     ScaleEntity.instance.setAttribute("scale", "" + scale + " " + scale + " " + scale);
-
 
     requestAnimationFrame(animate);
 }
@@ -336,7 +322,6 @@ function toggleSettings() {
 }
 
 function init() {
-
     Camera.instance = document.querySelector("a-entity[camera]");
     Camera.instance.setAttribute("rotation-position-reader");
     Marker.instance = document.getElementById("a_Marker");

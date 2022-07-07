@@ -9,10 +9,7 @@ import { Scene } from './Scene.js';
 import { ScaleEntity } from './ScaleEntity.js';
 
 
-let threeScene;
 let ball;
-let materials = {};
-let shading = 'smooth';
 let renderer;
 let camera;
 let controls;
@@ -21,15 +18,7 @@ const loader = new GLTFLoader();
 let orbitControls = false;
 let ballThrow = true;
 
-
-let customConsole;
-
-let aMarker;
-
-let camToMarker;
-
 let scale = 4.5;
-
 
 if (ballThrow) {
     window.addEventListener("touchstart", onTouchStart);
@@ -186,11 +175,6 @@ let pCups = [
         id: "blue11"
     }
 ]
-let pTable = {
-    x: 0,
-    y: 0,
-    z: 0
-}
 
 let now = Date.now();
 let deltaTime = 0.018;
@@ -255,43 +239,6 @@ function loadModel(model, position) {
     })
 }
 
-
-function addLights() {
-
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    directionalLight.position.set(0, 1, 0)
-    directionalLight.castShadow = true;
-    threeScene.add(directionalLight);
-
-    const ambientLight = new THREE.AmbientLight(0x404040, 1);
-    threeScene.add(ambientLight);
-
-    const spotLight1 = new THREE.PointLight(0xc4c4c4c4, 0.2)
-    spotLight1.position.set(0, 300, 500)
-    threeScene.add(spotLight1)
-
-    const spotLight2 = new THREE.PointLight(0xc4c4c4c4, 0.2)
-    spotLight2.position.set(500, 100, 0)
-    threeScene.add(spotLight2)
-
-    const spotLight3 = new THREE.PointLight(0xc4c4c4c4, 0.2)
-    spotLight3.position.set(0, 100, -500)
-    threeScene.add(spotLight3)
-
-    const spotLight4 = new THREE.PointLight(0xc4c4c4c4, 0.2)
-    spotLight4.position.set(-500, 300, 0)
-    threeScene.add(spotLight4)
-}
-
-
-function instantiateMaterials() {
-
-    materials['wireframe'] = new THREE.MeshBasicMaterial({ wireframe: true });
-    materials['flat'] = new THREE.MeshPhongMaterial({ specular: 0x000000, flatShading: true, side: THREE.DoubleSide });
-    materials['smooth'] = new THREE.MeshLambertMaterial({ side: THREE.DoubleSide });
-    materials['glossy'] = new THREE.MeshPhongMaterial({ side: THREE.DoubleSide });
-}
-
 function addBall() {
 
     ball = new Ball(gravity);
@@ -343,22 +290,6 @@ function calculateCameraPosition() {
 
     Camera.instance.position = camPos;
 }
-
-
-function log(message) {
-    let display = document.querySelector("#display");
-    display.innerHTML = message.toString();
-
-}
-
-
-
-function onKeyDown(_event) {
-    if (_event.code === 'Space') {
-        ball.setBack()
-    }
-}
-
 
 function animate() {
 
@@ -412,8 +343,6 @@ function init() {
     Scene.instance = document.getElementById("a_Scene");
     ScaleEntity.instance = document.getElementById("a_ScaleEntity");
 
-
-
     addBall();
 
     addCups();
@@ -434,6 +363,5 @@ function init() {
 }
 
 function onSizeToggleChanged(change) {
-
     scale = this.checked ? 4.5 : 1;
 }

@@ -21,6 +21,8 @@ const loader = new GLTFLoader();
 let orbitControls = false;
 let ballThrow = true;
 
+let amountAllCups = 20
+
 
 let scale = 4.5; // fitting for our Model to get realistic sizes 
 
@@ -30,8 +32,8 @@ if (ballThrow) {
 }
 
 let startTime = Date.now() // used for the shader to get the time since start
-let drunk = true;
-let drunkStage = 0.9;
+let drunk = false;
+let drunkStage = 0.0;
 
 
 let gravity = new THREE.Vector3(0, -9.81, 0);
@@ -201,7 +203,7 @@ function addCups() {
     let i = 0
     for (let pCup of pCups) {
         let src = ''
-        if (i <= 10) {
+        if (i <= amountAllCups/2) {
             src = 'RedCup.glb'
         } else {
             src = 'BlueCup.glb'
@@ -378,9 +380,10 @@ function animate() {
 
     ScaleEntity.instance.setAttribute("scale", "" + scale + " " + scale + " " + scale);
 
+    // editing shader variables on runtime
     document.getElementById("ball").object3D.children[0].material.uniforms.u_Time.value = now - startTime;
-    //TODO: Update drunk value of Shader 
-    //TODO: Update drunkStage of Shader
+    if(document.getElementsByClassName("empty").length > 0) document.getElementById("ball").object3D.children[0].material.uniforms.drunk.value = true; //getting drunk when first cup was hit
+    document.getElementById("ball").object3D.children[0].material.uniforms.drunkStage.value = document.getElementsByClassName("empty").length/amountAllCups; //raising effect with every cup which gets class 'empty'
 
     requestAnimationFrame(animate);
 }

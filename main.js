@@ -4,16 +4,16 @@ import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples
 import { EffectComposer } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/ShaderPass.js';
-import { GlitchPass } from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/GlitchPass.js';
-import { CustomShader, CustomShader2, CustomShader3 } from './customShader.js';
-import { shaderVariablesSingleton } from './ShaderVariables.js';
-
-//import { frameTime, drunk, drunkLevel } from './frameTime.js';
+import { SwayAndTunnelShader, GaussFilterShader, DrunkMultiplierShader } from './customShader.js';
 import { Ball } from './Ball.js'
 import {ARButton} from './ARButton.js'
 
 
 document.addEventListener("keydown", onKeyDown)
+
+///////////////////////////////////////////////////////////////////////
+/*///////////////////////////// Global Variables//////////////////// */
+///////////////////////////////////////////////////////////////////////
 
 let scene;
 let ball;
@@ -28,10 +28,9 @@ const loader = new GLTFLoader();
 let orbitControls = false;
 let ballThrow = true;
 
-//let CustomShader;
-let customShader;
-let customShader2;
-let customShader3;
+let swayAndTunnelShader;
+let gaussFilterShader;
+let drunkMultiplierShader;
 
 if (ballThrow) {
     window.addEventListener("mousedown", onMouseDown);
@@ -165,13 +164,13 @@ let pCups = [
         y: 0.67,
         z: -0.75
     }
-]
+] // Positions which we tested with the orbit controlls ui
 
 let pTable = {
     x: 0,
     y: 0,
     z: 0
-}
+} 
 
 let now = Date.now();
 let deltaTime = 0.018;
@@ -180,14 +179,17 @@ let mouseDownPos = new THREE.Vector2();
 let mouseUpPos = new THREE.Vector2();
 
 
+///////////////////////////////////////////////////////////////////////
+/*///////////////////////////// Functions ////////////////////////// */
+///////////////////////////////////////////////////////////////////////
 
+
+///////////// Instantiate everything
 
 init();
 
 
 function init() {
-
-    //setupGui();
 
     setupSceneCamRenderer();
 
@@ -201,18 +203,20 @@ function init() {
 
     loadModel('Table.glb', pTable)
 
-    //addDrunkEffect();
-
     if (orbitControls) {
         installOrbitControls();
     }
-
-
 
     animate();
 }
 
 
+///////////// functions to set up the scene
+
+function installOrbitControls() {
+    controls = new OrbitControls(camera, renderer.domElement)
+    controls.update()
+}
 
 function addCups() {
     let i = 0
@@ -226,50 +230,27 @@ function addCups() {
         loadModel(src, pCup)
         i++
     }
-    // loadModel('Cup.glb', pCups[0])
 }
 
-function installOrbitControls() {
-    controls = new OrbitControls(camera, renderer.domElement)
-    controls.update()
-}
-
+// used for the table and the cups
 function loadModel(model, position) {
     loader.load('Assets/' + model, function (glb) {
-        // console.log(glb)
         const root = glb.scene
-        // root.scale.set(1.5, 1.5, 1.5)
         root.position.set(position.x, position.y, position.z)
         scene.add(root)
     }, function (xhr) {
-        // console.log((xhr.loaded / xhr.total * 100) + '% loaded')
+        // 
     }, function (error) {
-        // console.log('ERROR: ', error)
+        // 
     })
 }
-
-
-// async function loadModels() {
-//
-//     // loader = THREE.GLTFLoader();
-//     //let loader = new THREE.GLTFLoader();
-//     let table = await Importer.import("Assets/Table.obj");
-//     scene.add(table);
-//
-//     let cup = await Importer.import("Assets/Cup.obj");
-//     scene.add(cup);
-// }
 
 function setupSceneCamRenderer() {
     renderer = new THREE.WebGLRenderer({ antialias: true});
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.xr.enabled = true;
 
-    
-
     scene = new THREE.Scene();
-
-    //scene.background = new THREE.Color(0xdddddd)
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.y = 1.3;
@@ -282,25 +263,21 @@ function setupSceneCamRenderer() {
 
     composer = new EffectComposer( renderer );
 
+    //Adding all the Passes to create the Post Processing
     const renderPass = new RenderPass( scene, camera );
     composer.addPass( renderPass ); 
 
-    customShader = new ShaderPass( CustomShader ); // in customshader.js kann man einen shader entwickeln der dann angewendet wird
-    composer.addPass( customShader );
+    swayAndTunnelShader = new ShaderPass( SwayAndTunnelShader ); 
+    composer.addPass( swayAndTunnelShader );
 
-    customShader2 = new ShaderPass( CustomShader2 ); // in customshader.js kann man einen shader entwickeln der dann angewendet wird
-    composer.addPass( customShader2 );
+    gaussFilterShader = new ShaderPass( GaussFilterShader ); 
+    composer.addPass( gaussFilterShader );
 
-    customShader3 = new ShaderPass( CustomShader3 ); // in customshader.js kann man einen shader entwickeln der dann angewendet wird
-    composer.addPass( customShader3 );
-
-    //const glitchPass = new GlitchPass(); // Nur zum beispiel das postprocessing funktioniert
-    //composer.addPass( glitchPass );
-    
+    drunkMultiplierShader = new ShaderPass( DrunkMultiplierShader ); 
+    composer.addPass( drunkMultiplierShader );
 }
 
 function addLights() {
-
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     directionalLight.position.set(0, 1, 0)
     directionalLight.castShadow = true;
@@ -328,7 +305,6 @@ function addLights() {
 
 
 function instantiateMaterials() {
-
     materials['wireframe'] = new THREE.MeshBasicMaterial({ wireframe: true });
     materials['flat'] = new THREE.MeshPhongMaterial({ specular: 0x000000, flatShading: true, side: THREE.DoubleSide });
     materials['smooth'] = new THREE.MeshLambertMaterial({ side: THREE.DoubleSide });
@@ -336,111 +312,18 @@ function instantiateMaterials() {
 }
 
 function addBall() {
-
     const geometry = new THREE.SphereGeometry(0.02, 32, 16);
-
     ball = new Ball(geometry, materials[shading], gravity);
-
     scene.add(ball);
-    //ball.position.copy(currentPosition)
     ball.updatePosition();
 }
 
 
-
-function addDrunkEffect() {
-
-    const planeGeometry = new THREE.PlaneGeometry(1, 1);
-    console.log(planeGeometry.parameters.width);
-    let drunkLevel = 1.0; //0.5 = drunk; 6 = good
-    let drunk = true;
-
-    var planeMaterial = new THREE.ShaderMaterial({
-        uniforms: {
-            size: {
-                value: new THREE.Vector3(planeGeometry.parameters.width, planeGeometry.parameters.height, planeGeometry.parameters.depth).multiplyScalar(0.5)
-            },
-            u_resolution: {
-                value: new THREE.Vector2(window.innerWidth, window.innerHeight)
-            },
-            length_center_to_corner: {
-                value: new THREE.Vector2(window.innerWidth, window.innerHeight).length()
-            },
-            drunkStage: {
-                value: drunkLevel
-            },
-            drunk: {
-                value: drunk
-            }
-        },
-        vertexShader: vertexShader,
-        fragmentShader: [
-            "uniform vec3 size;",
-            "uniform vec2 u_resolution;",
-            "uniform float length_center_to_corner;",
-            "uniform float drunkStage;",
-            "uniform bool drunk;",
-            "void main()",
-            "{",
-            "if(drunk) {",
-            "float rad = (size.x/0.9) * length_center_to_corner;",
-            "vec2 pos = vec2((u_resolution.x/2.0), (u_resolution.y/2.0));",
-            "float relPosX = abs(gl_FragCoord.x - pos.x);",
-            "float relPosY = abs(gl_FragCoord.y - pos.y);",
-            "float fragDist = sqrt((relPosX * relPosX) + (relPosY * relPosY));",
-            "float circleInfo = (rad - fragDist)/rad;",
-            "float value = smoothstep(1.0, 0.0, sqrt(circleInfo * drunkStage));",
-            "gl_FragColor = vec4(1,1,1,value);",
-            "} else {",
-            "gl_FragColor = vec4(0.0,0.0,0.0,0 );",
-            "}",
-            "}"
-        ].join("\n"),
-        transparent: true,
-        opacity: 0.0
-    });
-
-    const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-    plane.name = "drunkFilter";
-    plane.position.set(0.0, 0.0, 4.9);
-    scene.add(plane);
-}
-
-
+///////////// functions to controll Runtime
 
 function calculateDeltaTime() {
     deltaTime = (Date.now() - now) / 1000;
     now = Date.now();
-}
-
-function animate(time) {
-    customShader.uniforms.amount.value = time/1000;
-    customShader3.uniforms.amount.value = time/1000;
-    requestAnimationFrame(animate);
-    
-    calculateDeltaTime()
-    
-
-    if (ball) {
-        ball.rotateY(1 * deltaTime)
-        ball.rotateZ(1 * deltaTime)
-
-        ball.updatePhysics(deltaTime);
-    }
-
-
-
-
-    //shading = effectController.newShading;
-
-    if (controls) {
-        controls.update()
-    }
-
-   
-
-    
-    composer.render(deltaTime);
 }
 
 function onMouseDown(_event) {
@@ -451,26 +334,31 @@ function onMouseUp(_event) {
     mouseUpPos = new THREE.Vector2(_event.clientX, _event.clientY);
 
     let swipe = mouseUpPos.sub(mouseDownPos);
-    // console.log(swipe);
-    //console.log(ball.position);
     ball.toss(swipe);
 }
 
 function onKeyDown(_event) {
-    // console.log(_event)
     if (_event.code === 'Space') {
         ball.setBack()
     }
 }
 
-/*
-function setupGui() {
+///////////// Game Loop
 
-    effectController = {
-        newShading: 'glossy'
-    };
+function animate(time) {
+    swayAndTunnelShader.uniforms.amount.value = time/1000;
+    drunkMultiplierShader.uniforms.amount.value = time/1000;
+    requestAnimationFrame(animate);
+    
+    calculateDeltaTime()
+    if (ball) {
+        ball.rotateY(1 * deltaTime)
+        ball.rotateZ(1 * deltaTime)
+        ball.updatePhysics(deltaTime);
+    }
 
-    const gui = new GUI();
-    gui.add(effectController, 'newShading', ['wireframe', 'flat', 'smooth', 'glossy']).name('Shading').onChange(render);
+    if (controls) {
+        controls.update()
+    }
+    composer.render(deltaTime);
 }
-*/

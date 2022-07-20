@@ -1,7 +1,7 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
 import { shaderVariablesSingleton } from './ShaderVariables.js';
 
-let CustomShader = {
+let SwayAndTunnelShader = {
 	uniforms: {
 		tDiffuse: { value: null },
         drunkStage: {type: 'float', value: shaderVariablesSingleton.drunkLevel },
@@ -57,7 +57,7 @@ let CustomShader = {
 
 
 //Reference: https://www.shadertoy.com/view/XdfGDH (mrharicot) 29.05.2022
-let CustomShader2 = {
+let GaussFilterShader = {
 	uniforms: {
 		tDiffuse: { value: null },
         drunkStage: {type: 'float', value: shaderVariablesSingleton.drunkLevel },
@@ -129,7 +129,7 @@ let CustomShader2 = {
         }`
 };
 
-let CustomShader3 = {
+let DrunkMultiplierShader = {
     uniforms: {
         tDiffuse: { value: null },
         drunkStage: {type: 'float', value: shaderVariablesSingleton.drunkLevel },
@@ -195,4 +195,4 @@ let CustomShader3 = {
         `
 }
 
-export { CustomShader, CustomShader2 , CustomShader3 };
+export { SwayAndTunnelShader , GaussFilterShader , DrunkMultiplierShader };

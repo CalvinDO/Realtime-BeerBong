@@ -1,6 +1,6 @@
 class ShaderVariables {
-    drunk = true;
-    drunkLevel = 0.9;
+    drunk = false;
+    drunkLevel = 0.5;
 }
 let shaderVariablesSingleton = new ShaderVariables()
 

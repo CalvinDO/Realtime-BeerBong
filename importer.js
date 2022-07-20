@@ -1,3 +1,5 @@
+// used to import GLBS in the past, when ThreeJS had some bugs in our project
+
 class Importer {
     static async import(path) {
         let str = await (await fetch(path)).text();

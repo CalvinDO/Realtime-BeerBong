@@ -21,10 +21,10 @@ const loader = new GLTFLoader();
 let orbitControls = false;
 let ballThrow = true;
 
-let amountAllCups = 20
+let cupsTotalAmount = 20
 
 
-let scale = 4.5; // fitting for our Model to get realistic sizes 
+let scale = 4.5; // fitting for our Model to get semi-realistic sizes
 
 if (ballThrow) {
     window.addEventListener("touchstart", onTouchStart);
@@ -203,7 +203,7 @@ function addCups() {
     let i = 0
     for (let pCup of pCups) {
         let src = ''
-        if (i <= amountAllCups/2) {
+        if (i <= cupsTotalAmount/2) {
             src = 'RedCup.glb'
         } else {
             src = 'BlueCup.glb'
@@ -383,7 +383,7 @@ function animate() {
     // editing shader variables on runtime
     document.getElementById("ball").object3D.children[0].material.uniforms.u_Time.value = now - startTime;
     if(document.getElementsByClassName("empty").length > 0) document.getElementById("ball").object3D.children[0].material.uniforms.drunk.value = true; //getting drunk when first cup was hit
-    document.getElementById("ball").object3D.children[0].material.uniforms.drunkStage.value = document.getElementsByClassName("empty").length/amountAllCups; //raising effect with every cup which gets class 'empty'
+    document.getElementById("ball").object3D.children[0].material.uniforms.drunkStage.value = document.getElementsByClassName("empty").length/cupsTotalAmount; //raising effect with every cup which gets class 'empty'
 
     requestAnimationFrame(animate);
 }

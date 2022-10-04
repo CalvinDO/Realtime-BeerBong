@@ -25,7 +25,7 @@ let ballThrow = true;
 let cupsTotalAmount = 20
 
 
-let sceneScale = 4.5; // fitting for our Models to get semi-realistic sizes, this value is the result of testing combined with the mathematically correct value, which should be higher
+let sceneScale = 1; // fitting for our Models to get semi-realistic sizes, this value is the result of testing combined with the mathematically correct value, which should be higher
 //The scale variable is used as scale on the a-entity that scales the scene, and in calculations beeing effected by change of this scale
 
 
